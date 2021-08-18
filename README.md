@@ -2,7 +2,7 @@
 
 We propose an end-to-end framework for Real-time Obstacle Detection via Simultaneous semantic segmentation and disparity estimation Network (RODSNet).
 
-Below represents the overall architecture of the proposed network structure.
+Below represents the overall architecture of the proposed network.
 
 <p align="center"><img width=100% src="assets/overall_network.png"></p>
 
