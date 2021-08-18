@@ -108,27 +108,37 @@ All pretrained models are available in [here](link).
 
 We assume the downloaded weights are located under the `$RODSNet/ckpt` directory.
 
-## Evaluation
+
+
+## Training and Evaluation
+Detailed commands for training and evaluation are described in `script/train_test_guide.txt`. 
 
 To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
-If you want to save results, add `--save_val_results` option.
 
-To evaluate our disparity performance on SceneFlow dataset, typing belows:
+If you want to save any results, add `--save_val_results` option.
+Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results`.
+
+For training our RODSNet on `city_lost` datasets, type below command:
 ```shell
-python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_sceneflow_test \
---refinement_type hourglass --val_batch_size 1 --train_disparity --with_refine \
---resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --test_only
+python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_without_transfer \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+--train_semantic --train_disparity --with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
+--epsilon 1e-1
+```
+Trained results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/`
+(we can detect also obstacles via simultaneous semantic segmentation and dispariy estimation)
+
+
+To evaluate our performance with pretrained weights on `city_lost` dataset, type below command:
+```shell
+python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
+--with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
+--resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only
 ```
 
-## Training
 
-for training on sceneflow datasets
+## Sample
 
-```shell
-python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_resnet18_train_scene_flow_3type \
---optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 350 \
---with_refine --refinement_type hourglass --batch_size 8 --val_batch_size 8 --train_disparity
-```
 
 
 
