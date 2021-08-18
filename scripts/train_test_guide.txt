@@ -1,0 +1,138 @@
+#env setting
+conda env create --file environment.yaml
+cd network/deform_conv && bash build.sh
+
+
+#######################################################################################################################
+## sceneflow
+# for training
+python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_resnet18_train_scene_flow_3type \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 350 \
+--with_refine --refinement_type hourglass --batch_size 8 --val_batch_size 8 --train_disparity
+
+# for test
+python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_sceneflow_test \
+--refinement_type hourglass --val_batch_size 1 --train_disparity --with_refine \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --test_only
+# (epe:0.723, d1: 0.0348, >1px:0.0883, mean time:0.067s)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# KITTI_2015
+# for training
+# train kitti_2015 + kitti_2012 from sceneflow transfered results with only disparity modules
+python main.py --gpu_id 0 --dataset kitti_mix \
+--checkname train_kitti_mix_with_sceneflow_transfer --optimizer_policy ADAM --lr 4e-4 \
+--weight_decay 1e-4 --last_lr 1e-6 --epochs 600 --with_refine --refinement_type ours \
+--batch_size 5 --val_batch_size 5 --train_disparity --train_semantic \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth \
+--without_balancing
+
+# train kitti_2015 only with transfer above results
+python main.py --gpu_id 0 \
+--dataset kitti_2015 \
+--checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --last_lr 1e-6 \
+--epochs 600 \
+--with_refine \
+--refinement_type ours \
+--batch_size 10 --val_batch_size 10 \
+--train_disparity --train_semantic \
+--resume ckpt/kitti_mix/kitti_mix_with_sceneflow_transfer/epe_best_checkpoint.pth \
+--epsilon 1e-1 --sem_weight 3 --disp_weight 10
+
+# test
+python main.py --gpu_id 0 \
+--dataset kitti_2015 \
+--checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final_test \
+--with_refine \
+--refinement_type ours \
+--val_batch_size 1 \
+--train_disparity --train_semantic \
+--epsilon 1e-1 \
+--resume ckpt/kitti_2015/kitti_2015_best_disp_model/epe_best_checkpoint.pth \
+--test_only
+
+
+# submit for kitti_benchmark
+python submit_kitti.py --gpu_id 0 \
+--dataset kitti_2015 \
+--checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final_test \
+--with_refine \
+--refinement_type ours \
+--val_batch_size 1 \
+--val_img_height 384 --val_img_width 1280 \
+--train_disparity --train_semantic \
+--epsilon 1e-1 \
+--resume ckpt/kitti_2015/kitti_2015_best_disp_model/epe_best_checkpoint.pth \
+--test_only
+--output_dir output
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+## cityscapes
+# for training
+python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_cityscapes_transfer \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4  --epochs 400 --epsilon 1e-1 \
+--batch_size 4 --val_batch_size 4 --train_disparity --train_semantic --with_refine \
+--refinement_type ours --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth \
+--transfer_disparity
+
+# for test (full-size image)
+python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_cityscapes_transfer_test \
+--val_batch_size 1 \
+--train_disparity --train_semantic --with_refine --refinement_type ours \
+--resume ckpt/cityscapes/best_model_cityscapes/score_best_checkpoint.pth --test_only --epsilon 1e-1
+# (mIoU:76.4%, epe:0.76, d1: 2.55%, mean time:0.069s(14.5fps))
+# to save validation_results : add --save_val_results
+
+#(half-size image)
+python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_cityscapes_transfer_test \
+--val_batch_size 1 \
+--train_disparity --train_semantic --with_refine --refinement_type ours --epsilon 1e-1 \
+--resume ckpt/cityscapes/best_model_cityscapes/score_best_checkpoint.pth --test_only \
+--val_img_height 512 --val_img_width 1024
+# (mIoU:71.3%, epe:1.25, d1: 0.0718, mean time:0.033s(29.4fps))
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+## cityscapes + lost_and_found
+# for training
+# 1. without transfer
+python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_without_transfer \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+--train_semantic --train_disparity --with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
+--epsilon 1e-1
+
+# 2. with sceneflow transfer methods
+python main.py --gpu_id 0 --dataset city_lost --model ournet_resnet18 --checkname resnet18_train_citylost_eps_1e-1 \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+--with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
+--train_semantic --train_disparity --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth \
+--transfer_disparity --epsilon 1e-1
+
+# for test (full-size image)
+python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_test \
+--with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
+--resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only
+# (mIoU:74.1%, epe:1.20, d1: 4.73%, mean time:0.069s(14.5fps))
+# to save validation_results : add --save_val_results
+
+#(half-size image)
+python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_test \
+--with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
+--resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only \
+--val_img_height 512 --val_img_width 1024
+# 0.033s
+
+# ---------------------------------------------------------------------------------------------------------------------
+## sample test
+python sample_test.py --gpu_id 0 \
+--dataset kitti_2015 \
+--with_refine \
+--refinement_type ours \
+--train_disparity --train_semantic \
+--resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth \
+
+
+#######################################################################################################################
