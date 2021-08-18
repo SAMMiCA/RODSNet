@@ -153,9 +153,8 @@ if __name__ == '__main__':
     # Inference
     model.eval()
     inference_time = 0
-    sample_ID = [0, 1, 2, 3, 4, 5]
 
-    for ID in sample_ID:
+    for ID in range(8):
         left_filename = 'samples/left/' + str(ID) + '_left.png'
         right_filename = 'samples/right/' + str(ID) + '_right.png'
 
@@ -226,3 +225,4 @@ if __name__ == '__main__':
         save_name = 'results/' + str(ID) + '_overlay.png'
         save_name_sem = os.path.join('samples', save_name)
         overlay.save(save_name_sem)
+        print('%d th results are saved in samples/results folder' % ID)
