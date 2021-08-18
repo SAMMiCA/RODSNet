@@ -16,6 +16,7 @@ We recommend using [conda](https://www.anaconda.com/distribution/) for installat
 
 ```shell
 conda env create -f environment.yaml
+conda activate rodsnet
 ```
 
 After installing dependencies, build deformable convolution:
