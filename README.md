@@ -41,47 +41,35 @@ datasets
 │   │   └── colored_0
 │   │   └── colored_1
 │   │   └── disp_occ
-│   ├── testing
-│   │   └── colored_0
-│   │   └── colored_1
+│   └── testing
+│       └── colored_0
+│       └── colored_1
 ├── kitti_2015
 │   ├── training
 │   │   └── image_2
 │   │   └── image_3
 │   │   └── disp_occ_0
 │   │   └── semantic
-│   ├── testing
-│   │   └── image_2
-│   │   └── image_3
+│   └── testing
+│       └── image_2
+│       └── image_3
 └── cityscapes
     ├── leftImg8bit
-    │   ├── train
-    │   └── val
-    │   └── test
     ├── rightImg8bit
-    │   ├── train
-    │   └── val
-    │   └── test
     └── disparity
-    │   ├── train
-    │   └── val
-    │   └── test
-    ├── gtFine
+    └── gtFine
         ├── train
         └── val
         └── test          
 ```
 
 
-If you want to use multi-dataset training, mix Cityscapes and Lost and Found datasets and the directory structure should be like this:
-    
+To detect class-agnostic small obstacles (from Lost and Found) with 19 labelled class (from Cityscapes) simultaneously, we use multi-dataset training.
+Mix Cityscapes and Lost and Found datasets and the directory structure should be like this:
+```
+datasets
+└── city_lost
     ├─disparity
-    │  ├─test
-    │  │  ├─berlin
-    │  │  ├─bielefeld
-    │  │  ├─bonn
-    │  │  ├─...
-    │  │  └─munich
     │  ├─train
     │  │  ├─01_Hanns_Klemm_Str_45
     │  │  ├─03_Hanns_Klemm_Str_19
@@ -90,28 +78,30 @@ If you want to use multi-dataset training, mix Cityscapes and Lost and Found dat
     │  └─val
     │      ├─02_Hanns_Klemm_Str_44
     │      ├─04_Maurener_Weg_8
-    │      ├─05_Schafgasse_1
     │      ├─...
     │      └─munster
     ├─gtFine
     │  ├─train
-    │  │  ├─01_Hanns_Klemm_Str_45
-    │  │  ├─03_Hanns_Klemm_Str_19
+    │  │  ├─aachen
+    │  │  ├─bochum
     │  │  ├─...
     │  │  └─zurich
     │  └─val
+    │      ├─frankfurt
+    │      ├─lindau
+    │      └─munster
+    ├─gtCoarse
+    │  ├─train
+    │  │  ├─01_Hanns_Klemm_Str_45
+    │  │  ├─03_Hanns_Klemm_Str_19
+    │  │  ├─...
+    │  │  └─14_Otto_Lilienthal_Str_24
+    │  └─val
     │      ├─02_Hanns_Klemm_Str_44
     │      ├─04_Maurener_Weg_8
-    │      ├─05_Schafgasse_1
     │      ├─...
-    │      └─munster
+    │      └─15_Rechbergstr_Deckenpfronn
     └─leftImg8bit
-        ├─test
-        │  ├─berlin
-        │  ├─bielefeld
-        │  ├─bonn
-        │  ├─...
-        │  └─munich
         ├─train
         │  ├─01_Hanns_Klemm_Str_45
         │  ├─03_Hanns_Klemm_Str_19
@@ -123,6 +113,6 @@ If you want to use multi-dataset training, mix Cityscapes and Lost and Found dat
             ├─05_Schafgasse_1
             ├─...
             └─munster
-
+```
 
 
