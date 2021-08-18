@@ -2,6 +2,7 @@
 
 We propose an end-to-end framework for Real-time Obstacle Detection via Simultaneous semantic segmentation and disparity estimation Network (RODSNet).
 
+Below represents the overall architecture of the proposed network structure.
 
 <p align="center"><img width=100% src="assets/overall_network.png"></p>
 
@@ -109,7 +110,7 @@ datasets
 ```
 
 ## Pretrained weights
-All pretrained models are available in [here](link).
+All pretrained models are available in [here](https://drive.google.com/file/d/1U5fl2V5Y7HuUiEIiVFSm5CxFLSC-Xx6n/view?usp=sharing).
 
 We assume the downloaded weights are located under the `$RODSNet/ckpt` directory.
 
