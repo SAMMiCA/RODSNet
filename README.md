@@ -3,7 +3,7 @@
 We propose an end-to-end framework for Real-time Obstacle Detection via Simultaneous semantic segmentation and disparity estimation Network (RODSNet).
 
 Below represents the overall architecture of the proposed network.
-
+<p align="center"><img width=100% src="assets/overall_network.png"></p>
 
 (a) Overview of the proposed multi-task learning architecture for real-time class-agnostic obstacle detection. The main
 pipeline includes: (b) base feature extractor: shared encoder blocks between left and right images and multi-scale features
