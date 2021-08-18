@@ -77,9 +77,9 @@ datasets
     |       ├── ...
     |       └── munster
     ├── rightImg8bit
-    |   ├── same format as leftImg8bit
+    |   ├── same structure with leftImg8bit
     ├── disparity
-    |   ├── same format as leftImg8bit
+    |   ├── same structure with leftImg8bit
     └── gtFine
     |   ├── train
     |   |   ├── aachen
