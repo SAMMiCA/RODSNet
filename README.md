@@ -1,6 +1,9 @@
 # RODSNet: End-to-end Real-time Obstacle Detection Networkfor Safe Self-driving via Multi-task Learning
 
 
+<p align="center"><img width=80% src="assets/overall_network.png"></p>
+
+
 
 ## Installation
 
