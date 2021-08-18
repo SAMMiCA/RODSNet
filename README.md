@@ -23,6 +23,9 @@ cd network/deform_conv && bash build.sh
 Download [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html), [KITTI 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo), [KITTI 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo), 
 ,[Cityscapes](https://www.cityscapes-dataset.com/), and [Lost and Found](http://www.6d-vision.com/lostandfounddataset) datasets. 
 
+
+To simultaneously detect class-agnostic obstacles (from Lost and Found) and 19 annotated labels (from Cityscapes), we created a city_lost directory by mixing  cityscapes and Lost and found datasets. 
+
 Our folder structure is as follows:
 ```
 datasets
@@ -38,81 +41,69 @@ datasets
 │       └── frames_finalpass
 ├── kitti_2012
 │   ├── training
-│   │   └── colored_0
-│   │   └── colored_1
+│   │   ├── colored_0
+│   │   ├── colored_1
 │   │   └── disp_occ
 │   └── testing
-│       └── colored_0
+│       ├── colored_0
 │       └── colored_1
 ├── kitti_2015
 │   ├── training
-│   │   └── image_2
-│   │   └── image_3
-│   │   └── disp_occ_0
+│   │   ├── image_2
+│   │   ├── image_3
+│   │   ├── disp_occ_0
 │   │   └── semantic
 │   └── testing
-│       └── image_2
+│       ├── image_2
 │       └── image_3
 └── cityscapes
-    ├── leftImg8bit
-    ├── rightImg8bit
-    └── disparity
-    └── gtFine
-        ├── train
-        └── val
-        └── test          
-```
-
-
-To detect class-agnostic small obstacles (from Lost and Found) with 19 labelled class (from Cityscapes) simultaneously, we use multi-dataset training.
-Mix Cityscapes and Lost and Found datasets and the directory structure should be like this:
-```
-datasets
+|   ├── leftImg8bit
+|   ├── rightImg8bit
+|   ├── disparity
+|   └── gtFine
+|       ├── train
+|       ├── val
+|       └── test
 └── city_lost
-    ├─disparity
-    │  ├─train
-    │  │  ├─01_Hanns_Klemm_Str_45
-    │  │  ├─03_Hanns_Klemm_Str_19
-    │  │  ├─...
-    │  │  └─zurich
-    │  └─val
-    │      ├─02_Hanns_Klemm_Str_44
-    │      ├─04_Maurener_Weg_8
-    │      ├─...
-    │      └─munster
-    ├─gtFine
-    │  ├─train
-    │  │  ├─aachen
-    │  │  ├─bochum
-    │  │  ├─...
-    │  │  └─zurich
-    │  └─val
-    │      ├─frankfurt
-    │      ├─lindau
-    │      └─munster
-    ├─gtCoarse
-    │  ├─train
-    │  │  ├─01_Hanns_Klemm_Str_45
-    │  │  ├─03_Hanns_Klemm_Str_19
-    │  │  ├─...
-    │  │  └─14_Otto_Lilienthal_Str_24
-    │  └─val
-    │      ├─02_Hanns_Klemm_Str_44
-    │      ├─04_Maurener_Weg_8
-    │      ├─...
-    │      └─15_Rechbergstr_Deckenpfronn
-    └─leftImg8bit
-        ├─train
-        │  ├─01_Hanns_Klemm_Str_45
-        │  ├─03_Hanns_Klemm_Str_19
-        │  ├─...
-        │  └─zurich
-        └─val
-            ├─02_Hanns_Klemm_Str_44
-            ├─04_Maurener_Weg_8
-            ├─05_Schafgasse_1
-            ├─...
-            └─munster
+    ├── leftImg8bit
+    |   ├── train
+    |   |   ├── 01_Hanns_Klemm_Str_45
+    |   |   ├── 03_Hanns_Klemm_Str_19
+    |   |   ├── ...
+    |   |   └── zurich
+    |   └── val
+    |       ├── 02_Hanns_Klemm_Str_44
+    |       ├── 04_Maurener_Weg_8
+    |       ├── ...
+    |       └── munster
+    ├── rightImg8bit
+    |   ├── same format as leftImg8bit
+    ├── disparity
+    |   ├── same format as leftImg8bit
+    └── gtFine
+    |   ├── train
+    |   |   ├── aachen
+    |   |   ├── bochum
+    |   |   ├── ...
+    |   |   └── zurich
+    |   └── val
+    |       ├── frankfurt
+    |       ├── lindau
+    |       └── munster
+    └── gtCoarse
+        ├── train
+        |   ├── 01_Hanns_Klemm_Str_45
+        |   ├── 03_Hanns_Klemm_Str_19
+        |   ├── ...
+        |   └── 14_Otto_Lilienthal_Str_24
+        └── val
+            ├── 02_Hanns_Klemm_Str_44
+            ├── 04_Maurener_Weg_8
+            ├── ...
+            └── 15_Rechbergstr_Deckenpfronn
 ```
+
+
+
 
 
