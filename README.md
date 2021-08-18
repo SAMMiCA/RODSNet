@@ -1,7 +1,9 @@
-# RODSNet: End-to-end Real-time Obstacle Detection Networkfor Safe Self-driving via Multi-task Learning
+# RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
+
+We propose an end-to-end framework for Real-time Obstacle Detection via Simultaneous semantic segmentation and disparity estimation Network (RODSNet).
 
 
-<p align="center"><img width=80% src="assets/overall_network.png"></p>
+<p align="center"><img width=100% src="assets/overall_network.png"></p>
 
 
 
