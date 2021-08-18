@@ -148,7 +148,7 @@ python sample_test.py --gpu_id 0 \
 
 
 ## Acknowledgements
-Part of the code is adopted from previous works: [AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet). The deformable convolution op is taken from [mmdetection](https://github.com/open-mmlab/mmdetection). We thank the original authors for their awesome repos.  
+Part of the code is adopted from previous works: [AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet). We thank the original authors for their awesome repos.  
 
 This  work  was  supported  by  theInstitute  for  Information  &  Communications  Technology  Promotion  (IITP)grant funded by the Korea government (MSIT) (No.2020-0-00440, Develop-ment of Artificial Intelligence Technology that Continuously Improves Itselfas the Situation Changes in the Real World).
 
