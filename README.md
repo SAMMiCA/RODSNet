@@ -24,7 +24,7 @@ Download [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/
 ,[Cityscapes](https://www.cityscapes-dataset.com/), and [Lost and Found](http://www.6d-vision.com/lostandfounddataset) datasets. 
 
 
-To simultaneously detect class-agnostic obstacles (from Lost and Found) and 19 annotated labels (from Cityscapes), we created a city_lost directory by mixing  cityscapes and Lost and found datasets. 
+To simultaneously detect class-agnostic obstacles (from Lost and Found) and 19 annotated labels (from Cityscapes), we created a `city_lost` directory by mixing  cityscapes and Lost and found datasets. 
 
 Our folder structure is as follows:
 ```
@@ -103,6 +103,32 @@ datasets
             └── 15_Rechbergstr_Deckenpfronn
 ```
 
+## Pretrained weights
+All pretrained models are available in [here](link).
+
+We assume the downloaded weights are located under the `$RODSNet/ckpt` directory.
+
+## Evaluation
+
+To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
+If you want to save results, add `--save_val_results` option.
+
+To evaluate our disparity performance on SceneFlow dataset, typing belows:
+```shell
+python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_sceneflow_test \
+--refinement_type hourglass --val_batch_size 1 --train_disparity --with_refine \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --test_only
+```
+
+## Training
+
+for training on sceneflow datasets
+
+```shell
+python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_resnet18_train_scene_flow_3type \
+--optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 350 \
+--with_refine --refinement_type hourglass --batch_size 8 --val_batch_size 8 --train_disparity
+```
 
 
 
