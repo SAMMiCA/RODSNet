@@ -113,11 +113,6 @@ We assume the downloaded weights are located under the `$RODSNet/ckpt` directory
 ## Training and Evaluation
 Detailed commands for training and evaluation are described in `script/train_test_guide.txt`. 
 
-To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
-
-If you want to save any results, add `--save_val_results` option.
-Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results`.
-
 For training our RODSNet on `city_lost` datasets, type below command:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_without_transfer \
@@ -125,11 +120,16 @@ python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylos
 --train_semantic --train_disparity --with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
 --epsilon 1e-1
 ```
-Trained results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/`
-(we can detect also obstacles via simultaneous semantic segmentation and dispariy estimation)
+Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
 
 
-To evaluate our performance with pretrained weights on `city_lost` dataset, type below command:
+To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
+
+If you want to save any results, add `--save_val_results` option.
+Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.
+
+
+To evaluate our performance on `city_lost` dataset with pretrained results, type below command:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
 --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
@@ -137,9 +137,18 @@ python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
 ```
 
 
-## Sample
+## Sample Test for fast inference.
+```shell
+python sample_test.py --gpu_id 0 \
+--with_refine \
+--refinement_type ours \
+--train_disparity --train_semantic \
+--resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth
+```
 
 
+## Acknowledgements
+Part of the code is adopted from previous works: [AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet). The deformable convolution op is taken from [mmdetection](https://github.com/open-mmlab/mmdetection). We thank the original authors for their awesome repos.  
 
-
+This  work  was  supported  by  theInstitute  for  Information  &  Communications  Technology  Promotion  (IITP)grant funded by the Korea government (MSIT) (No.2020-0-00440, Develop-ment of Artificial Intelligence Technology that Continuously Improves Itselfas the Situation Changes in the Real World).
 
