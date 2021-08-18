@@ -145,6 +145,9 @@ python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
 
 
 ## Sample Test for fast inference.
+
+We can simply test our results without download huge datasets. 
+
 ```shell
 python sample_test.py --gpu_id 0 \
 --with_refine \
@@ -152,6 +155,8 @@ python sample_test.py --gpu_id 0 \
 --train_disparity --train_semantic \
 --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth
 ```
+output results will be saved in `$RODSNet/samples/results` folder.
+
 
 
 ## Acknowledgements
