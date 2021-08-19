@@ -136,19 +136,18 @@ python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylos
 ```
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
 
-
-To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
-
-If you want to save any results, add `--save_val_results` option.
-Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.
-
-
 To evaluate our performance on `city_lost` dataset with pretrained results, type below command:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
 --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
 --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only
 ```
+
+To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
+
+If you want to save any results, add `--save_val_results` option.
+Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.
+
 
 
 ## Sample Test for fast inference.
