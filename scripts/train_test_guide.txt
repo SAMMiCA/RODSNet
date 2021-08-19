@@ -24,7 +24,7 @@ python main.py --gpu_id 0 --dataset sceneflow --checkname disp_only_sceneflow_te
 python main.py --gpu_id 0 --dataset kitti_mix \
 --checkname train_kitti_mix_with_sceneflow_transfer --optimizer_policy ADAM --lr 4e-4 \
 --weight_decay 1e-4 --last_lr 1e-6 --epochs 600 --with_refine --refinement_type ours \
---batch_size 5 --val_batch_size 5 --train_disparity --train_semantic \
+--batch_size 5 --val_batch_size 5 --train_disparity \
 --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth \
 --without_balancing
 
