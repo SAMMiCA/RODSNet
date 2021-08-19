@@ -31,7 +31,7 @@ python main.py --gpu_id 0 --dataset kitti_mix \
 # train kitti_2015 only with transfer above results
 python main.py --gpu_id 0 \
 --dataset kitti_2015 \
---checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final \
+--checkname train_kitti_2015 \
 --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --last_lr 1e-6 \
 --epochs 600 \
 --with_refine \
@@ -44,7 +44,7 @@ python main.py --gpu_id 0 \
 # test
 python main.py --gpu_id 0 \
 --dataset kitti_2015 \
---checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final_test \
+--checkname kitti_2015_test \
 --with_refine \
 --refinement_type ours \
 --val_batch_size 1 \
@@ -57,7 +57,7 @@ python main.py --gpu_id 0 \
 # submit for kitti_benchmark
 python submit_kitti.py --gpu_id 0 \
 --dataset kitti_2015 \
---checkname train_kitti_2015_transfer_from_kitti_mix_sceneflow_final_test \
+--checkname kitti_2015_benchmark \
 --with_refine \
 --refinement_type ours \
 --val_batch_size 1 \
