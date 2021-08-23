@@ -99,7 +99,7 @@ def decode_target(target):
     return train_id_to_color[target]
 
 
-# for submit to KITTI 2015 test benchmark
+
 if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = opts.gpu_id
     device = torch.device('cuda:{}'.format(opts.gpu_id) if torch.cuda.is_available() else 'cpu')
