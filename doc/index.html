@@ -1,0 +1,196 @@
+<?xml version="1.0"
+      encoding="UTF-8"
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning </title>
+<meta name="generator" content="Nested http://nestededitor.sourceforge.net/" />
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+    menuSettings: {zoom: "Double-Click", zscale: "300%"},
+    tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]},
+    MathMenu: {showRenderer: false},
+    "HTML-CSS": {
+        availableFonts: ["TeX"],
+        preferredFont: "TeX",
+        imageFont: null
+    }
+  });
+</script>
+<style type="text/css">
+    body { background-color: White; font-family: Helvetica, Futura, "Trebuchet MS", sans-serif; width:900px; margin:0 auto;}
+    h1 { color: black; font-family: Helvetica, Futura, "Trebuchet MS", sans-serif; }
+    p { color: black; font-family: Helvetica, Futura, "Trebuchet MS", sans-serif;}
+</style>
+<style>
+.aligncenter {
+    text-align: center;
+}
+</style>
+
+
+</head>
+<body>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div id="header" class="header" align="center">
+<h1> End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning </h1>
+<p style="text-align:center">
+    <font size="4"> <a href="mailto:tjsong@rit.kaist.ac.kr" target="_blank">Taek-jin Song</a> 
+      <sup>*,	<span>&#8224;</span> </sup>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <font size="4"> <a href="mailto:jojeong@rit.kaist.ac.kr" target="_blank">Jongoh Jeong</a> 
+      <sup>*,	<span>&#8224;</span> </sup>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <font size="4"> <a href="mailto:johkim@rit.kaist.ac.kr" target="_blank">Jong-Hwan Kim</a> 
+      <sup>*</sup>
+    </font>
+</p>
+<p style="text-align:left">
+  <i><font size="4">
+      <sup>*</sup>School of Electrical Engineering, Korea Advanced Institute of Science and Technology (<b><a href="https://kaist.ac.kr/">KAIST</a></b>)  
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <sup><span>&#8224;</span></sup>Equal Contribution
+  </i>
+</p>
+</div>
+
+<hr class="heavy" />
+<h2>Abstract</h2>
+<div id="body" class="body">
+<div id="section1" class="section">
+<p>
+Semantic segmentation and depth estimation lie at the heart of scene understanding and play crucial roles especially for autonomous driving and intelligent robot navigation. While development of deep convolutional neural networks (CNNs) has led to remarkable progress in each task separately, there are only a handful of studies that exploit these tasks for obstacle detection in urban autonomous driving scenarios, with a high accuracy in a real-time fashion. In this light, we propose an end-to-end Real-time Obstacle Detection network via Simultaneous semantic segmentation and disparity estimation, coined RODSNet1, which jointly learns semantic segmentation and disparity map from a stereo RGB pair and refines them simultaneously in a single module.We verify the disparity estimation performance on KITTI Stereo 2015 benchmark after pre-training on Scene Flow, and the semantic segmentation on Cityscapes and Lost and Found datasets. In particular, we merge Cityscapes and Lost and Found  in our multi-dataset fusion for the task of obstacle detection on the road, where unexpected hazards or debris are frequently encountered. Our network achieves a balanced trade-off between obstacle detection accuracy and inference speed on this fused dataset and can be deployed in real-time at 14.5 Hz (full) and 29.4 Hz (half) on 2048x1024 pixel resolution.
+</p>
+
+<figure class="aligncenter">
+  <img src="pipeline.png" alt="pipeline" style="width:100%">
+</figure>
+
+<p>  
+  <a href="https://arxiv.org/abs//?????" target="_blank">[arXiV]</a>
+  <!-- <a href="https://doi.org/??????" target="_blank">[PDF]</a> -->
+  <a href="https://github.com/SAMMiCA/RODSNet" target="_blank">[Code]</a>
+ </p>
+
+<hr class="heavy" /></div>
+<h2>Demo</h2>
+<p>We demonstrate the working demo of our network on real-world autonomous driving scenes.</p>
+<table style="width:100%">
+  <tr>
+    <th>
+	    <video width="840" height="480" controls>
+		  <source src="video.mp4" type="video/mp4" alt="video demonstration">
+		  Your browser does not support HTML5 video.
+		</video>
+    </th>
+  </tr>
+</table>
+
+
+
+<hr class="heavy" />
+<h2>Obstacle Detection</h2>
+<div id="body" class="body">
+<div id="section1" class="section">
+<p>
+  ...
+
+  <br><br>
+
+  "The definition of obstacle detection task has been often interpreted in the scope of anomaly detection for its nature of distinguishing never-seen-before objects from the rest. In this characterization, [38] attempts to reconstruct a scene from the segmentation map using a Restricted Boltzmann Machine and to detect anomalous patches in the road specifically, and [39] implements a discrepancy network to compare meaningful differences between the reconstructed and the reference RGB within its region of interest. Commercial works such as Mobileye [40] and Subaru Eyesight™ [41] also demonstrate success in detecting obstacles in the scope of anomaly detection. However, all these works have limitations in that they are effective in detecting large-scale obstacles only and lack localization capabilities for other class objects. 
+  
+  <br><br>
+
+  Within our definition of obstacle detection, one such a
+  network should be able to distinguish both large, labelled class
+  objects as well as small, generic obstacle class. For example,
+  [42] is a non-machine-learning based approach to detecting
+  obstacles using inverse perspective mapping from stereo vision
+  by determining the collision-free space before vehicles.
+  Another work [43] is based on monocular vision, which uses
+  motion features on two consecutive frames to compute the
+  likelihood of obstacle regions. While this enjoys a benefit of
+  integration with the optical flow method [44] without extra
+  calibration of the camera, the use of traditional descriptors as
+  features precludes further improvements in accuracy.
+  A recent work [4] introduces a multi-modal approach to
+  leverage depth information in addition to RGB data for the task
+  of identifying obstacles in the segmentation map in real-time.
+  While this addresses real-time unexpected obstacle detection
+  from the semantic segmentation map, its RGB and depth
+  feature fusion by element-wise sum in the Attention Feature
+  Complementary (AFC) module is insufficient to discern unannotated
+  obstacles as well. In this paper, we develop a
+  more generalized unexpected obstacle detection network in a
+  multi-task learning framework to promote mutual information
+  exchange between semantic and disparity features. Moreover,
+  our network achieves real-time speed for practical self-driving
+  applications."
+
+  <br><br>
+
+  ...
+</p>
+
+<hr class="heavy" />
+<h2>Multi-Task Learning</h2>
+<div id="body" class="body">
+<div id="section1" class="section">
+<p>
+  Our multi-task learning network consists of the following modules: Base feature extractor, semantic segmentation, disparity estimation and refinement.
+
+  <br><br><br>
+  <i>Base feature extractor</i>
+  
+  <figure class="aligncenter">
+    <img src="base_encoder.png" alt="Base feature extractor" style="width:50%">
+  </figure>
+
+  <i>Semantic Segmentation</i>
+  
+  <figure class="aligncenter">
+    <img src="semantic_segmentation.png" alt="semantic segmentation" style="width:50%">
+  </figure>
+
+  <i>Disparity estimation</i>
+
+  <figure class="aligncenter">
+    <img src="disparity_estimation.png" alt="disparity estimation" style="width:50%">
+  </figure>
+
+  <i>Refinement</i>
+
+  <figure class="aligncenter">
+    <img src="refinement.png" alt="refinement" style="width:50%">
+  </figure>
+</p>
+
+
+<hr class="heavy" /></div>
+<div id="section8" class="section">
+  <h2 id="bibtex">Citation</h2>
+<pre>
+@article {songjeong2021rodsnet,
+    author = {Song, Taek-jin and Jeong, Jongoh and Kim, Jong-Hwan},
+    title = {End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning},
+    year = {2021},
+    doi = {???},
+    URL = {https://doi.org/???},
+    journal = {Journal}
+}
+</pre>
+</div>
+
+
+<hr class="heavy" />
+<h2> Acknowledgements </h2>
+<p>This work was supported by the
+  Institute for Information & Communications Technology Promotion (IITP)
+  grant funded by the Korea government (MSIT) (No.2020-0-00440, Development
+  of Artificial Intelligence Technology that Continuously Improves Itself
+  as the Situation Changes in the Real World). </p>

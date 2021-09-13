@@ -1,46 +1,29 @@
-# RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
+## RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
 
-We propose an end-to-end framework for Real-time Obstacle Detection via Simultaneous semantic segmentation and disparity estimation Network (RODSNet).
+We propose an end-to-end framework for **R**eal-time **O**bstacle **D**etection Network via **S**imultaneous semantic segmentation and disparity estimation (RODSNet). Below shows the overall architecture of the proposed network.
+<p align="center"><img width=100% src="doc/overall_network.png"></p>
 
-Below represents the overall architecture of the proposed network.
-<p align="center"><img width=100% src="assets/overall_network.png"></p>
-
-(a) Overview of the proposed multi-task learning architecture for real-time class-agnostic obstacle detection. The main
-pipeline includes: (b) base feature extractor: shared encoder blocks between left and right images and multi-scale features
-obtained by pyramidal fusion; (c) semantic segmentation module: successively upsampled multi-scale features to produce
-initial semantic map estimates of 1/4 resolutions of the original; (d) disparity prediction module: multi-scale disparity features
-of 1/16, 1/8, 1/4 resolutions are upsampled by the disparity feature extractor (left) and used to compute 3D cost volumes,
-aggregate costs and produce initial disparity map estimates (right). Grayscale maps (1/8, 1/16) are used only for training
-(rightmost); (e) refinement module: simultaneous refinement of initial semantic segmentation and disparity estimates (both 1/4
-resolution) along with the reference RGB image to yield final maps for both tasks.
+Figure: (a) Overview of the proposed multi-task learning architecture for real-time class-agnostic obstacle detection. The main pipeline includes: (b) base feature extractor: shared encoder blocks between left and right images and multi-scale features obtained by pyramidal fusion; (c) semantic segmentation module: successively upsampled multi-scale features to produce initial semantic map estimates of 1/4 resolutions of the original; (d) disparity prediction module: multi-scale disparity features of 1/16, 1/8, 1/4 resolutions are upsampled by the disparity feature extractor (left) and used to compute 3D cost volumes, aggregate costs and produce initial disparity map estimates (right). Grayscale maps (1/8, 1/16) are used only for training (rightmost); (e) refinement module: simultaneous refinement of initial semantic segmentation and disparity estimates (both 1/4 resolution) along with the reference RGB image to yield final maps for both tasks.
 
 
-## Installation
+#### Installation
 
 Our code is based on PyTorch 1.2.0, CUDA 10.0 and python 3.7. 
-
 We recommend using [conda](https://www.anaconda.com/distribution/) for installation: 
-
 ```shell
 conda env create -f environment.yaml
 conda activate rodsnet
 ```
-
 After installing dependencies, build deformable convolution:
-
 ```shell
 cd network/deform_conv && bash build.sh
 ```
 
 
-## Datasets
-Download [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html), [KITTI 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo), [KITTI 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo), 
-,[Cityscapes](https://www.cityscapes-dataset.com/), and [Lost and Found](http://www.6d-vision.com/lostandfounddataset) datasets. 
+#### Datasets
+Download [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html), [KITTI Stereo 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo), [KITTI Stereo 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo), [Cityscapes](https://www.cityscapes-dataset.com/), and [Lost and Found](http://www.6d-vision.com/lostandfounddataset) datasets. 
 
-
-To simultaneously detect class-agnostic obstacles (from Lost and Found) and 19 annotated labels (from Cityscapes), we created a `city_lost` directory by mixing  cityscapes and Lost and found datasets. 
-
-Our folder structure is as follows:
+To detect objects of both class-agnostic obstacle class (from Lost and Found) and the set of 19 annotated classes (from Cityscapes), we created a `city_lost` directory by our multi-dataset fusion approach. Our folder structure is as follows:
 ```
 datasets
 └── sceneflow
@@ -117,17 +100,14 @@ datasets
             └── 15_Rechbergstr_Deckenpfronn
 ```
 
-## Pretrained weights
+#### Pre-trained weights
 All pretrained models are available in [here](https://drive.google.com/file/d/1U5fl2V5Y7HuUiEIiVFSm5CxFLSC-Xx6n/view?usp=sharing).
+*We assume the downloaded weights are located under the `$RODSNet/ckpt` directory.*
 
-We assume the downloaded weights are located under the `$RODSNet/ckpt` directory.
-
-
-
-## Training and Evaluation
+#### Training and Evaluation
 Detailed commands for training and evaluation are described in `script/train_test_guide.txt`. 
 
-For training our RODSNet on `city_lost` datasets, type below command:
+For training our RODSNet on `city_lost` datasets:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_without_transfer \
 --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
@@ -136,23 +116,18 @@ python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylos
 ```
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
 
-To evaluate our performance on `city_lost` dataset with pretrained results, type below command:
+To evaluate our performance on `city_lost` dataset with pretrained results:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test \
 --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
 --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only
 ```
 
-To enable fast experimenting, evaluation runs on-the-fly without saving the intermediate results. 
-
-If you want to save any results, add `--save_val_results` option.
-Then, output results will be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.
+For fast inference, evaluation is run without saving the intermediate results.  (To save any results, add `--save_val_results` option. The output results will then be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.)
 
 
 
-## Sample Test for fast inference.
-
-We can simply test our results without download huge datasets. 
+#### Sample Inference Test
 
 ```shell
 python sample_test.py --gpu_id 0 \
@@ -161,13 +136,22 @@ python sample_test.py --gpu_id 0 \
 --train_disparity --train_semantic \
 --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth
 ```
-output results will be saved in `$RODSNet/samples/results` folder.
 
 
+#### Acknowledgements
 
-## Acknowledgements
+- This  work  was  supported  by  the Institute  for  Information  &  Communications  Technology  Promotion  (IITP)grant funded by the Korea government (MSIT) (No.2020-0-00440, Development of Artificial Intelligence Technology that Continuously Improves Itself as the Situation Changes in the Real World).
 
-This  work  was  supported  by  theInstitute  for  Information  &  Communications  Technology  Promotion  (IITP)grant funded by the Korea government (MSIT) (No.2020-0-00440, Develop-ment of Artificial Intelligence Technology that Continuously Improves Itselfas the Situation Changes in the Real World).
+- Parts of the code are adopted from previous works ([AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet)). We appreciate the original authors for their awesome repos. 
 
-Part of the code is adopted from previous works: [AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet). We thank the original authors for their awesome repos. 
-
+#### Citing this work
+```bash
+@article {songjeong2021rodsnet,
+    author = {Song, Taek-jin and Jeong, Jongoh and Kim, Jong-Hwan},
+    title = {End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning},
+    year = {2021},
+    doi = {???},
+    URL = {https://doi.org/???},
+    journal = {Journal}
+}
+```
