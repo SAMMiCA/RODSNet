@@ -105,7 +105,7 @@ python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylos
 --epsilon 1e-1
 
 # 2. with sceneflow transfer methods
-python main.py --gpu_id 0 --dataset city_lost --model ournet_resnet18 --checkname resnet18_train_citylost_eps_1e-1 \
+python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resnet18_train_citylost_eps_1e-1 \
 --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
 --with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth \
