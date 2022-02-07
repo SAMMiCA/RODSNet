@@ -72,6 +72,10 @@ class BoundaryAwareFocalLoss(nn.Module):
         alphas = label_distance_weight.view(-1)
         weight = self.weight[target].view(-1).to(self.device)
 
+        if self.opts.with_depth_level_loss:
+            disp_distance_weight = batch['disp_distance_weight'].to(self.device)
+            betas = disp_distance_weight.view(-1)
+
         logpt = F.log_softmax(input, dim=-1)
         logpt = logpt.gather(1, target)
         logpt = logpt.view(-1)
@@ -83,9 +87,10 @@ class BoundaryAwareFocalLoss(nn.Module):
             loss = -1 * alphas * torch.exp(self.gamma * (1 - pt)) * logpt
         elif self.opts.without_semantic_border:
             loss = -1 * weight * torch.exp(self.gamma * (1 - pt)) * logpt
+        elif self.opts.with_depth_level_loss:
+            loss = -1 * weight * alphas * betas * torch.exp(self.gamma * (1 - pt)) * logpt
         else:
             loss = -1 * weight * alphas * torch.exp(self.gamma * (1 - pt)) * logpt
-
         loss = loss.sum() / N
 
         # if (self.step_counter % self.print_each) == 0:
@@ -135,8 +140,6 @@ class FocalLoss2(nn.Module):
         self.step_counter += 1
 
         return loss
-
-
 
 
 class SegmentationLosses(object):
@@ -196,47 +199,6 @@ class SegmentationLosses(object):
             loss /= n
 
         return loss
-
-
-# class DisparityLosses(nn.Module):
-#     def __init__(self, weight=None, device=None):
-#         super(DisparityLosses, self).__init__()
-#         self.weight = weight
-#         self.device = device
-#
-#     def forward(self, batch, pyramid_weight, pred_disp_pyramid, gt_disp, mask):
-#         disp_loss = 0
-#         pyramid_loss = []
-#         if 'label_distance_weight' in batch.keys():
-#             label_distance_weight = batch['label_distance_weight'].to(self.device)
-#             N = (label_distance_weight.data > 0.).sum()
-#             if N.le(0):
-#                 return torch.zeros(size=(0,), device=self.device, requires_grad=True).sum()
-#             alphas = label_distance_weight[mask].view(-1)
-#         else:
-#             alphas = 1
-#
-#         for k in range(len(pred_disp_pyramid)):
-#             pred_disp = pred_disp_pyramid[k]
-#             pyr_weight = pyramid_weight[k]
-#
-#             if pred_disp.size(-1) != gt_disp.size(-1):
-#                 pred_disp = pred_disp.unsqueeze(1)  # [B, 1, H, W]
-#                 pred_disp = F.interpolate(pred_disp, size=(gt_disp.size(-2), gt_disp.size(-1)),
-#                                           mode='bilinear', align_corners=False) * (gt_disp.size(-1) / pred_disp.size(-1))
-#                 pred_disp = pred_disp.squeeze(1)  # [B, H, W]
-#
-#             # curr_loss = F.smooth_l1_loss(pred_disp[mask], gt_disp[mask],
-#             #                              reduction='mean')
-#
-#             t = torch.abs(pred_disp[mask] - gt_disp[mask])
-#             curr_loss = alphas * torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
-#             curr_loss = curr_loss.sum() / curr_loss.size()[0]
-#
-#             disp_loss += pyr_weight * curr_loss
-#             pyramid_loss.append(curr_loss)
-#
-#         return disp_loss, pyramid_loss
 
 
 def DisparityLosses(pyramid_weight, pred_disp_pyramid, gt_disp, mask):
