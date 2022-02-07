@@ -10,7 +10,7 @@ small obstacles (in brown).*
 
 Base Feature Extraction                      |  Initial Estimation of Semantic segmentation and Disparity prediction
 :-------------------------------------------:|:----------------------------------------------------------------------:
-<img src="doc/overall_network_v3_basefeatext.png" width="100" /> <img src="doc/overall_network_v3_refinement.png" width="100" /> |  <img src="doc/overall_network_v3_initial_est.png" width="100" />
+<img src="doc/overall_network_v3_basefeatext.png" width="400" /> <img src="doc/overall_network_v3_refinement.png" width="400" /> |  <img src="doc/overall_network_v3_initial_est.png" width="500" />
 
 
 
