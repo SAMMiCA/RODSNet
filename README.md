@@ -163,6 +163,8 @@ python sample_test.py --gpu_id 0 \
 --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
+You can see the results of RODSNet-2x tested in various environments in the `samples/RODSNet-2x_results` folder.
+
 ---
 
 ### Acknowledgments
