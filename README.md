@@ -18,8 +18,8 @@ Base feature extraction. Intermediate features of the same scale are each summed
 | column 1 | column 2 |
 |----------|----------|
 | ![](doc/overall_network_v3_basefeatext.png)    | ![](doc/overall_network_v3_initial_est.png)|
-| ![](doc/overall_network_v3_refinement.png)     | |
-|----------|----------|
+| ![](doc/overall_network_v3_refinement.png)     |                                            |
+
 
 
 
