@@ -173,10 +173,9 @@ if __name__ == '__main__':
     # Inference
     model.eval()
     inference_time = 0
-    sample_ID = [0, 1, 2, 3, 4, 5]
 
     with torch.no_grad():
-        for ID in range(0, 14):
+        for ID in range(0, 17):
             left_filename = 'samples/left/' + str(ID) + '_left.png'
             right_filename = 'samples/right/' + str(ID) + '_right.png'
 
