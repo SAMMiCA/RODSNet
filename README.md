@@ -21,6 +21,8 @@ Semantic segmentation (in yellow background): multiscale features are successive
 
 Disparity prediction (in gray background): we correlate the multi-scale disparity features of scales 1/4 , 1/8 , 1/16 and compute a multi-scale 3D cost volume, aggregate costs, and produce an initial disparity map estimate in three different resolutions. Grayscale maps are used only for training.
  
+Refinement: initial semantic and disparity maps, and the left RGB (reference) image are fed into Nx hourglass network, and then upsampled with skip connections. The effect
+of the red branch is studied in ablation.
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
