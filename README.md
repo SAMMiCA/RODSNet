@@ -6,7 +6,7 @@ This is the official PyTorch source code for the proposed end-to-end framework f
 *Figure: (a) Overview of the proposed multi-task learning architecture for real-time class-agnostic obstacle detection. The main pipeline includes: (b) base feature extractor: shared encoder blocks between left and right images and multi-scale features obtained by pyramidal fusion; (c) semantic segmentation module: successively upsampled multi-scale features to produce initial semantic map estimates of 1/4 resolutions of the original; (d) disparity prediction module: multi-scale disparity features of 1/16, 1/8, 1/4 resolutions are upsampled by the disparity feature extractor (left) and used to compute 3D cost volumes, aggregate costs and produce initial disparity map estimates (right). Grayscale maps (1/8, 1/16) are used only for training (rightmost); (e) refinement module: simultaneous refinement of initial semantic segmentation and disparity estimates (both 1/4 resolution) along with the reference RGB image to yield final maps for both tasks.*
 
 ---
-#### Evaluation Demo (real-world)
+#### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
 ![Demo 1](doc/demo1_web.gif)
 
 ---
