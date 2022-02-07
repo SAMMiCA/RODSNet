@@ -5,7 +5,7 @@ This is the official PyTorch source code for the proposed end-to-end framework f
 
 *Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
 pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
-small obstacles (in brown). Best viewed in color.*
+small obstacles (in brown).*
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
