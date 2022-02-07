@@ -1,9 +1,11 @@
 ## RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
 
 This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection Network via **S**imultaneous semantic segmentation and disparity estimation (RODSNet). Below shows the overall network architecture.
-<p align="center"><img width=100% src="doc/overall_network.png"></p>
+<p align="center"><img width=100% src="doc/overall_network_v3.png"></p>
 
-*Figure: (a) Overview of the proposed multi-task learning architecture for real-time class-agnostic obstacle detection. The main pipeline includes: (b) base feature extractor: shared encoder blocks between left and right images and multi-scale features obtained by pyramidal fusion; (c) semantic segmentation module: successively upsampled multi-scale features to produce initial semantic map estimates of 1/4 resolutions of the original; (d) disparity prediction module: multi-scale disparity features of 1/16, 1/8, 1/4 resolutions are upsampled by the disparity feature extractor (left) and used to compute 3D cost volumes, aggregate costs and produce initial disparity map estimates (right). Grayscale maps (1/8, 1/16) are used only for training (rightmost); (e) refinement module: simultaneous refinement of initial semantic segmentation and disparity estimates (both 1/4 resolution) along with the reference RGB image to yield final maps for both tasks.*
+*Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
+pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
+small obstacles (in brown). Best viewed in color.*
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
