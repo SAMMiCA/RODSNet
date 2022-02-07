@@ -21,10 +21,10 @@ Base feature extraction. Intermediate features of the same scale are each summed
   </tr>
   <tr>
     <tr>
-      <img src="doc/overall_network_v3_basefeatext.png" width=700>
+      <td><img src="doc/overall_network_v3_basefeatext.png" width=700></td>
     </tr>
     <tr>
-      <img src="doc/overall_network_v3_basefeatext.png" width=700>
+      <td><img src="doc/overall_network_v3_basefeatext.png" width=700></td>
     </tr>
     <td><img src="doc/overall_network_v3_initial_est.png" width=500></td>
   </tr>
