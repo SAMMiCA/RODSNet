@@ -24,7 +24,7 @@ of scales 1/4 , 1/8 , 1/16 , 1/32 , 1/64 , 1/128 . The network parameters are sh
 *Refinement (in blue background): initial semantic and disparity maps, and the left RGB (reference) image are fed into Nx hourglass network, and then upsampled with skip connections. The effect of the red branch is studied in ablation.*
 
 ---
-#### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
+#### Evaluation Demo (real world), (RODSNet-2x vs. RFNet)
 ![Demo 1](doc/demo1_web.gif)
 
 ---
@@ -181,7 +181,7 @@ python sample_test.py --gpu_id 0 \
 --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
-You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*kitti, lost and found, cityscapes, carla simulation, real worlds*) in the `samples/RODSNet-2x_results` folder.
+You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the `samples/RODSNet-2x_results` folder.
 
 ---
 
@@ -193,12 +193,12 @@ You can see the sample results of pre-trained RODSNet-2x which are tested on var
 
 ### Citation
 ```bash
-@article {songjeong2021rodsnet,
-    author = {Song, Taek-jin and Jeong, Jongoh and Kim, Jong-Hwan},
-    title = {End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning},
-    year = {2021},
+@article {songjeong2022rodsnet,
+    author = {Song, Taek-jin* and Jeong, Jongoh* and Kim, Jong-Hwan},
+    title = {End-to-end Real-time Obstacle Detection for Safe Self-driving via Multi-task Learning},
+    year = {2022},
     doi = {???},
     URL = {https://doi.org/???},
-    journal = {Journal}
+    journal = {IEEE Transactions on Intelligent Transportation Systems}
 }
 ```
