@@ -10,7 +10,7 @@ small obstacles (in brown).*
 
 Base Feature Extraction                      |  Initial Estimation of Semantic segmentation and Disparity prediction
 :-------------------------------------------:|:----------------------------------------------------------------------:
-![](doc/overall_network_v3_basefeatext.png) ![](doc/overall_network_v3_refinement.png) |  ![](doc/overall_network_v3_initial_est.png)
+![](doc/overall_network_v3_basefeatext.png width=200) ![](doc/overall_network_v3_refinement.png width=200) |  ![](doc/overall_network_v3_initial_est.png width=500)
 
 Base feature extraction: Intermediate features of the same scale are each summed to yield multi-scale base features
 of scales 1/4 , 1/8 , 1/16 , 1/32 , 1/64 , 1/128 . The network parameters are shared for both left and right RGB images. EB denotes an encoder backbone block.
