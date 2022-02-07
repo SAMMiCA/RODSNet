@@ -7,6 +7,12 @@ This is the official PyTorch source code for the proposed end-to-end framework f
 pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
 small obstacles (in brown).*
 
+<p float="center">
+  <img src="doc/overall_network_v3_basefeatext.png" width="100" />
+  <img src="doc/overall_network_v3_initial_est.png" width="100" /> 
+</p>
+
+
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
 ![Demo 1](doc/demo1_web.gif)
