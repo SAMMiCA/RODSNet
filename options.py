@@ -16,6 +16,7 @@ class Options:
         self.parser = argparse.ArgumentParser()
 
     def _dataset_options(self):
+        # Model Options
         self.parser.add_argument("--data_root", type=str, default='/home/tjsong/datasets',
                                  help="path to Dataset ")
         self.parser.add_argument("--dataset", type=str, default='cityscapes',
@@ -25,6 +26,7 @@ class Options:
                                  help="num classes (default: auto)")
 
     def _model_options(self):
+        # Deeplab Options
         self.parser.add_argument("--model", type=str, default='resnet18',
                                  choices=['resnet18',  'mobilenetv2',
                                           'efficientnetb0'], help='model name')
@@ -33,6 +35,7 @@ class Options:
         self.parser.add_argument("--output_stride", type=int, default=16, choices=[8, 16])
 
     def _train_options(self):
+        # Train Options
         self._train_learning_options()
         self._train_size_options()
         self._train_print_options()
@@ -40,7 +43,7 @@ class Options:
         self._validate_options()
 
     def _train_learning_options(self):
-        self.parser.add_argument('--epochs', type=int, default=400, metavar='N',
+        self.parser.add_argument('--epochs', type=int, default=300, metavar='N',
                                  help='number of epochs to train (default: auto)')
         self.parser.add_argument('--start_epoch', type=int, default=0,
                                  metavar='N', help='start epochs (default:0)')
@@ -57,26 +60,26 @@ class Options:
                                  help="learning rate scheduler policy")
         self.parser.add_argument("--weight_decay", type=float, default=1e-4,
                                  help='weight decay (default: 1e-4)')
-        self.parser.add_argument("--optimizer_policy", type=str, default='ADAM',
+        self.parser.add_argument("--optimizer_policy", type=str, default='ADAM', choices=['SGD', 'ADAM'],
                                  help="learning rate scheduler policy")
 
-        self.parser.add_argument("--epsilon", type=float, default=1e-1,
+        self.parser.add_argument("--epsilon", type=float, default=2e-2,
                                  help='parameter for balancing class weight [1e-2, 2e-2, 5e-2, 1e-1]')
 
         self.parser.add_argument('--use_balanced_weights', action='store_true', default=True,
                                  help='whether to use balanced weights (default: True)')
 
         self.parser.add_argument("--sem_weight", type=float, default=1,
-                                 help='parameter for semantic loss weight')
+                                 help='parameter for balancing class weight [1e-2, 2e-2, 5e-2, 1e-1]')
         self.parser.add_argument("--disp_weight", type=float, default=0.1,
-                                 help='parameter for disparity loss weight')
+                                 help='parameter for balancing class weight [1e-2, 2e-2, 5e-2, 1e-1]')
         self.parser.add_argument("--pseudo_disp_weight", type=float, default=0.1,
-                                 help='parameter for pseudo disparity loss weight')
+                                 help='parameter for balancing class weight [1e-2, 2e-2, 5e-2, 1e-1]')
 
     def _train_size_options(self):
-        self.parser.add_argument("--batch_size", type=int, default=4,
-                                 help='batch size (default: 4)')
-        self.parser.add_argument("--val_batch_size", type=int, default=4,
+        self.parser.add_argument("--batch_size", type=int, default=6,
+                                 help='batch size (default: 16)')
+        self.parser.add_argument("--val_batch_size", type=int, default=6,
                                  help='batch size for validation (default: 4)')
         self.parser.add_argument("--step_size", type=int, default=10000)
         self.parser.add_argument("--crop_size", type=int, default=384)      # width value, in cityscapes dataset height is divided by 2
@@ -125,6 +128,16 @@ class Options:
         self.parser.add_argument("--save_val_results", action='store_true', default=False,
                                  help="save segmentation results to \"./results\"")
 
+    def _pascal_voc_options(self):
+        # PASCAL VOC Options
+        self.parser.add_argument("--year", type=str, default='2012',
+                                 choices=['2012_aug', '2012', '2011', '2009', '2008', '2007'], help='year of VOC')
+
+
+    def _depth_options(self):
+        self.parser.add_argument('--use_depth', action="store_true", default=False,
+                                 help='training with depth image or not (default: False)')
+
     def _stereo_depth_prediction_options(self):
 
         self.parser.add_argument('--max_disp', default=192, type=int, help='Max disparity')
@@ -139,6 +152,7 @@ class Options:
         self.parser.add_argument('--highest_loss_only', action='store_true',
                             help='Only use loss on highest scale for finetuning')
         self.parser.add_argument('--load_pseudo_gt', action='store_true', help='Load pseudo gt for supervision')
+        self.parser.add_argument('--with_depth_level_loss', action='store_true', help='train segmentation')
 
         # md-fusion
         self.parser.add_argument('--not_md_fusion', action='store_true', help='not apply md_fusion')
@@ -150,10 +164,28 @@ class Options:
         self.parser.add_argument('--output_dir', default='output', type=str,
                                  help='Directory to save inference results')
 
+        self.parser.add_argument("--new_crop", action='store_true', default=False)
+        self.parser.add_argument("--disp_to_obst_ch", action='store_true', default=False)
+        self.parser.add_argument("--disp_plus_1_to_obst_ch", action='store_true', default=False)
+        self.parser.add_argument("--gamma", type=float, default=1,
+                                 help='parameter for semantic obstacle channel [1, 5, 10]')
+
+        self.parser.add_argument('--save_pth_every_epoch', action='store_true', help='save every epoch pth files')
+
+        self.parser.add_argument('--resume_dir', type=str, default='./',
+                                 help='put the path to resuming file if needed')
+        self.parser.add_argument('--save_dir', type=str, default='./',
+                                 help='put the path to resuming file if needed')
+
+        self.parser.add_argument('--without_depth_range_miou', action='store_true', help='not apply depth_range_miou')
+
+
     def parse(self):
         self._dataset_options()
         self._model_options()
         self._train_options()
+        # self._pascal_voc_options()
+        self._depth_options()
         self._stereo_depth_prediction_options()
 
         self.options = self.parser.parse_args()
