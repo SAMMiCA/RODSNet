@@ -115,14 +115,14 @@ python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_citysc
     # for test (full-size image)
     python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_test \
     --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
-    --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only
+    --resume ckpt/city_lost/RODSNet_1x/score_best_checkpoint.pth --test_only
     # (mIoU:74.1%, epe:1.20, d1: 4.73%, mean time:0.069s(14.5fps))
     # to save validation_results : add --save_val_results
 
     #(half-size image)
     python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_test \
     --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
-    --resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth --test_only \
+    --resume ckpt/city_lost/RODSNet_1x/score_best_checkpoint.pth --test_only \
     --val_img_height 512 --val_img_width 1024
     # 0.033s
     
@@ -142,7 +142,7 @@ python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_citysc
     --with_refine --refinement_type new18 \
     --batch_size 4 --val_batch_size 4 \
     --train_semantic --train_disparity \
-    --resume run/city_lost/resnet18_train_refine_new18/experiment_0/score_best_checkpoint.pth \
+    --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth \
     --epsilon 1e-1 --test_only
     
 # RODSNet-3x
@@ -161,7 +161,7 @@ python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_citysc
     --with_refine --refinement_type new33 \
     --batch_size 4 --val_batch_size 4 \
     --train_semantic --train_disparity \
-    --resume run/city_lost/resnet18_train_refine_new33/experiment_0/score_best_checkpoint.pth \
+    --resume ckpt/city_lost/RODSNet_3x/checkpoint.pth \
     --epsilon 1e-1 --test_only
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -170,6 +170,8 @@ python sample_test.py --gpu_id 0 \
 --with_refine \
 --refinement_type ours \
 --train_disparity --train_semantic \
---resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth 
+--resume ckpt/city_lost/RODSNet_1x/score_best_checkpoint.pth
+
+
 
 #######################################################################################################################
