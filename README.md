@@ -7,12 +7,8 @@ This is the official PyTorch source code for the proposed end-to-end framework f
 pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
 small obstacles (in brown).*
 
-<p float="center">
-  <img src="doc/overall_network_v3_basefeatext.png" width="500" />
-  <img src="doc/overall_network_v3_initial_est.png" width="500" /> 
-</p>
 
-Solarized dark             |  Solarized Ocean
+Base Feature Extraction             |  Initial Estimation of Semantic seg. and Disparity pred.
 :-------------------------:|:-------------------------:
 ![](doc/overall_network_v3_basefeatext.png)  |  ![](doc/overall_network_v3_initial_est.png)
 
