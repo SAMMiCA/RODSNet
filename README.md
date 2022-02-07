@@ -12,6 +12,10 @@ small obstacles (in brown).*
   <img src="doc/overall_network_v3_initial_est.png" width="500" /> 
 </p>
 
+Solarized dark             |  Solarized Ocean
+:-------------------------:|:-------------------------:
+![](doc/overall_network_v3_basefeatext.png)  |  ![](doc/overall_network_v3_initial_est.png)
+
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
