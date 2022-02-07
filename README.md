@@ -8,8 +8,8 @@ pair of stereo RGB images to infer semantic segmentation and disparity map simul
 small obstacles (in brown).*
 
 <p float="center">
-  <img src="doc/overall_network_v3_basefeatext.png" width="100" />
-  <img src="doc/overall_network_v3_initial_est.png" width="100" /> 
+  <img src="doc/overall_network_v3_basefeatext.png"/>
+  <img src="doc/overall_network_v3_initial_est.png"/> 
 </p>
 
 
