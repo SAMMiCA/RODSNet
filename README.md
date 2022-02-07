@@ -11,7 +11,24 @@ small obstacles (in brown).*
 Base Feature Extraction             |  Initial Estimation of Semantic segmentation and Disparity prediction
 :-------------------------:|:-------------------------:
 ![](doc/overall_network_v3_basefeatext.png)  |  ![](doc/overall_network_v3_initial_est.png)
-Base feature extraction. Intermediate features of the same scale are each summed to yield multi-scale base features of scales 1/4, 1/8, 1/16, 1/32, 1/64, 1/128. The network parameters are shared for both left and right RGB images. EB denotes an encoder backbone block.                                                                                     |  Semantic segmentation (in yellow background): multiscale features are successively upsampled to produce an initial semantic map estimate of 1/4 resolution of the original. Disparity prediction (in gray background): we correlate the multi-scale disparity features of scales 1/4 , 1/8 , 1/16 and compute a multi-scale 3D cost volume, aggregate costs, and produce an initial disparity map estimate in three different resolutions. Grayscale maps are used only for training.
+Base feature extraction. Intermediate features of the same scale are each summed to yield multi-scale base features of scales 1/4, 1/8, 1/16, 1/32, 1/64, 1/128. The network parameters are shared for both left and right RGB images. EB denotes an encoder backbone block. |  Semantic segmentation (in yellow background): multiscale features are successively upsampled to produce an initial semantic map estimate of 1/4 resolution of the original. Disparity prediction (in gray background): we correlate the multi-scale disparity features of scales 1/4 , 1/8 , 1/16 and compute a multi-scale 3D cost volume, aggregate costs, and produce an initial disparity map estimate in three different resolutions. Grayscale maps are used only for training.
+
+
+<table>
+  <tr>
+    <td>Base Feature Extraction</td>
+    <td>Initial Estimation of Semantic segmentation and Disparity prediction</td>
+  </tr>
+  <tr>
+    <td><img src="doc/overall_network_v3_basefeatext.png" width=500></td>
+    <td><img src="doc/overall_network_v3_initial_est.png" width=500></td>
+  </tr>
+  <tr>
+    <td>Base feature extraction. Intermediate features of the same scale are each summed to yield multi-scale base features of scales 1/4, 1/8, 1/16, 1/32, 1/64, 1/128. The network parameters are shared for both left and right RGB images. EB denotes an encoder backbone block.</td>
+     <td>Semantic segmentation (in yellow background): multiscale features are successively upsampled to produce an initial semantic map estimate of 1/4 resolution of the original. Disparity prediction (in gray background): we correlate the multi-scale disparity features of scales 1/4 , 1/8 , 1/16 and compute a multi-scale 3D cost volume, aggregate costs, and produce an initial disparity map estimate in three different resolutions. Grayscale maps are used only for training.</td>
+  </tr>
+ </table>
+
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
