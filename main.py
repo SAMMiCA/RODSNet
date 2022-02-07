@@ -13,7 +13,7 @@ if __name__ == '__main__':
         if opts.resume is None:
             raise RuntimeError("=> no checkpoint found...")
         else:
-            print("checkpoint found at '{}'" .format(opts.resume))
+            print("checkpoint found at '{}' \n" .format(opts.resume))
         trainer.test()
     else:
         for epoch in range(trainer.opts.start_epoch, trainer.opts.epochs):
