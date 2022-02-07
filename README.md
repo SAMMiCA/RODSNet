@@ -19,8 +19,8 @@ Base feature extraction. Intermediate features of the same scale are each summed
     <td>Base Feature Extraction</td>
     <td>Initial Estimation of Semantic segmentation and Disparity prediction</td>
   </tr>
-  <tr>
-    <td><img src="doc/overall_network_v3_basefeatext.png" width=500></td>
+  <tr float="center">
+    <td><img src="doc/overall_network_v3_basefeatext.png" width=700></td>
     <td><img src="doc/overall_network_v3_initial_est.png" width=500></td>
   </tr>
   <tr>
