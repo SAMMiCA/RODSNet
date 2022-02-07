@@ -4,8 +4,9 @@ import torch
 from torchvision import transforms
 from torch.utils.data.dataloader import default_collate
 
-from dataloaders.datasets import Cityscapes, CityLostFound
-from dataloaders import custom_transforms as sw
+from dataloaders.datasets import VOCSegmentation, Cityscapes, CityLostFound, LostFound
+# from dataloaders import custom_transforms as sw
+from dataloaders import custom_transforms2 as sw
 
 def get_dataset(opts):
     """ Dataset And Augmentation
@@ -21,6 +22,7 @@ def get_dataset(opts):
         target_size_crops = (random_crop_size[0], random_crop_size[1])
         target_size_crops_feats = (random_crop_size[0] // 4, random_crop_size[1] // 4)
         target_size = (opts.val_img_width, opts.val_img_height)
+        target_size_feats = (opts.val_img_width // 4, opts.val_img_height // 4)
 
         train_transform = sw.Compose(
             [
@@ -43,16 +45,26 @@ def get_dataset(opts):
                              mode='val', transform=val_transform, opts=opts)
 
     elif opts.dataset == 'city_lost':
-        random_crop_size = (768, 768)
+        # random_crop_size = (1024, 512)   # w, h  (768,768) --> (1024, 512)
+        if opts.new_crop:
+            random_crop_size = (1024, 512)
+            new_crop = True
+            min_, max_ = 0.8, 1.0
+        else:
+            random_crop_size = (768, 768)
+            new_crop = False
+            min_, max_ = 0.5, 2.0
 
         target_size_crops = (random_crop_size[0], random_crop_size[1])
         target_size_crops_feats = (random_crop_size[0] // 4, random_crop_size[1] // 4)
         target_size = (opts.val_img_width, opts.val_img_height)
+        target_size_feats = (opts.val_img_width // 4, opts.val_img_height // 4)
 
         train_transform = sw.Compose(
             [
                 sw.CropBlackArea(),
-                sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb),
+                # sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb, min=.8, max=1.0),
+                sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb, min=min_, max=max_, new_crop=new_crop),
                 sw.SetTargetSize(target_size=target_size_crops, target_size_feats=target_size_crops_feats),
                 sw.LabelBoundaryTransform(num_classes=opts.num_classes, reduce=True),
                 sw.Tensor(),
@@ -66,26 +78,37 @@ def get_dataset(opts):
              ]
         )
 
-        train_dst = CityLostFound(root=opts.data_root, dataset_name=opts.dataset,
-                                  mode='train', transform=train_transform)
-        val_dst = CityLostFound(root=opts.data_root, dataset_name=opts.dataset,
-                                mode='val', transform=val_transform)
+        if opts.not_md_fusion:
+            train_dst = LostFound(root=opts.data_root, dataset_name=opts.dataset,
+                                   mode='train', transform=train_transform)
+            val_dst = LostFound(root=opts.data_root, dataset_name=opts.dataset,
+                                 mode='val', transform=val_transform)
+        else:
+            train_dst = CityLostFound(root=opts.data_root, dataset_name=opts.dataset,
+                                   mode='train', transform=train_transform)
+            val_dst = CityLostFound(root=opts.data_root, dataset_name=opts.dataset,
+                                 mode='val', transform=val_transform)
 
     elif opts.dataset == 'kitti_2015':
         # size of original input image : (1242, 375)
+        # random_crop_size = 256
         random_crop_size = (896, 256)
         target_size_crops = random_crop_size
         target_size_crops_feats = (random_crop_size[0] // 4, random_crop_size[1] // 4)
+        target_size = (1280, 384)
+        target_size_feats = (1280 // 4, 384 // 4)
 
         train_transform = transforms.Compose(
-            [
+            [   # sw.PadImage(size=(1280, 384)),
                 sw.RandomCrop_PIL(256, 896),
                 sw.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
+                # sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb),
                 sw.SetTargetSize(target_size=target_size_crops, target_size_feats=target_size_crops_feats),
                 sw.LabelBoundaryTransform(num_classes=opts.num_classes, reduce=True),
                 sw.Tensor(),
             ]
         )
+
         val_transform = transforms.Compose(
             [
                 sw.RandomCrop_PIL(384, 1280, validate=True),
@@ -102,11 +125,14 @@ def get_dataset(opts):
         random_crop_size = (1152, 256)
         target_size_crops = random_crop_size
         target_size_crops_feats = (random_crop_size[0] // 4, random_crop_size[1] // 4)
+        target_size = (1280, 384)
+        target_size_feats = (1280 // 4, 384 // 4)
 
         train_transform = transforms.Compose(
-            [
+            [  # sw.PadImage(size=(1280, 384)),
                 sw.RandomCrop_PIL(256, 1152),
                 sw.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
+                # sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb),
                 sw.SetTargetSize(target_size=target_size_crops, target_size_feats=target_size_crops_feats),
                 sw.Tensor(),
             ]
@@ -114,8 +140,8 @@ def get_dataset(opts):
 
         val_transform = transforms.Compose(
             [
-                sw.RandomCrop_PIL(384, 1280, validate=True),
-                sw.Tensor(),
+             sw.RandomCrop_PIL(384, 1280, validate=True),
+             sw.Tensor(),
              ]
         )
 
@@ -126,7 +152,7 @@ def get_dataset(opts):
 
     elif opts.dataset == 'sceneflow':
         # origin size : 960x540
-        ## random_crop : 384x384
+        ## random_crop : 38x38x
 
         random_crop_size = (384, 384)
         scale = 1
@@ -136,11 +162,12 @@ def get_dataset(opts):
 
         target_size_crops = (random_crop_size[0], random_crop_size[1])
         target_size_crops_feats = (random_crop_size[0] // 4, random_crop_size[1] // 4)
+        target_size = (960, 540)
+        target_size_feats = (960 // 4, 540 // 4)
 
         train_transform = sw.Compose(
             [
                 sw.RandomSquareCropAndScale(random_crop_size, ignore_id=255, mean=mean_rgb),
-                sw.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
                 sw.SetTargetSize(target_size=target_size_crops, target_size_feats=target_size_crops_feats),
                 sw.Tensor(),
             ]
