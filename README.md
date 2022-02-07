@@ -31,11 +31,11 @@ Base feature extraction. Intermediate features of the same scale are each summed
     </thead>
     <tbody>
         <tr>
-            <td rowspan=4>L1 Name</td>
+            <td rowspan=2>L1 Name</td>
             <td rowspan=2>L2 Name A</td>
         </tr>
         <tr>
-            <td rowspan=2>L3 Name B</td>
+            <td rowspan=4>L3 Name B</td>
         </tr>
 
     </tbody>
