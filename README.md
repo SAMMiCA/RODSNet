@@ -11,34 +11,9 @@ small obstacles (in brown).*
 Base Feature Extraction             |  Initial Estimation of Semantic segmentation and Disparity prediction
 :----------------------------------:|:-------------------------:
 ![](doc/overall_network_v3_basefeatext.png)  |  ![](doc/overall_network_v3_initial_est.png)
-Base feature extraction. Intermediate features of the same scale are each summed to yield multi-scale base features of scales 1/4, 1/8, 1/16, 1/32, 1/64, 1/128. The network parameters are shared for both left and right RGB images. EB denotes an encoder backbone block. |  Semantic segmentation (in yellow background): multiscale features are successively upsampled to produce an initial semantic map estimate of 1/4 resolution of the original. Disparity prediction (in gray background): we correlate the multi-scale disparity features of scales 1/4 , 1/8 , 1/16 and compute a multi-scale 3D cost volume, aggregate costs, and produce an initial disparity map estimate in three different resolutions. Grayscale maps are used only for training.
 
 
  
-| column 1 | column 2 |
-|----------|----------|
-| ![](doc/overall_network_v3_basefeatext.png)    | ![](doc/overall_network_v3_initial_est.png)|
-|column 3 |
-| ![](doc/overall_network_v3_refinement.png)                                                 |
-
-
-<table>
-    <thead>
-        <tr>
-            <th>Layer 1</th>
-            <th>Layer 2</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan=2>L1 Name</td>
-            <td rowspan=2>L2 Name A</td>
-        </tr>
-        <tr>
-            <td rowspan=4>L3 Name B</td>
-        </tr>
-    </tbody>
-</table>
 
 ---
 #### Evaluation Demo (real-world), (RODSNet-2x vs. RFNet)
