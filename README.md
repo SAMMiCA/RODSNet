@@ -122,12 +122,15 @@ Download all pretrained models [here](https://drive.google.com/file/d/1U5fl2V5Y7
 #### Train and Evaluate
 Detailed commands for training and evaluation are described in `script/train_test_guide.txt`. 
 
-For training our RODSNet on `city_lost` datasets:
+For training our RODSNet-2x on `city_lost` datasets:
 ```shell
-python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylost_eps_1e-1_without_transfer \
---optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
---train_semantic --train_disparity --with_refine --refinement_type ours --batch_size 4 --val_batch_size 4 \
---epsilon 1e-1
+python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resnet18_train_refine_new18 \
+    --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+    --with_refine --refinement_type new18 \
+    --batch_size 4 --val_batch_size 4 \
+    --train_semantic --train_disparity \
+    --resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+    --epsilon 1e-1
 ```
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
 
