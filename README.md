@@ -8,7 +8,7 @@ pair of stereo RGB images to infer semantic segmentation and disparity map simul
 small obstacles (in brown).*
 
 
-Base Feature Extraction                      |  Initial Estimation of Semantic segmentation and Disparity prediction
+Base Feature Extraction & Refinement Module                      |  Initial Estimation of Semantic segmentation and Disparity prediction
 :-------------------------------------------:|:----------------------------------------------------------------------:
 <img src="doc/overall_network_v3_basefeatext.png" width="400" /> <img src="doc/overall_network_v3_refinement.png" width="400" /> |  <img src="doc/overall_network_v3_initial_est.png" width="800" />
 
