@@ -158,9 +158,9 @@ For fast inference, evaluation is run without saving the intermediate results.  
 ```shell
 python sample_test.py --gpu_id 0 \
 --with_refine \
---refinement_type ours \
+--refinement_type new18 \
 --train_disparity --train_semantic \
---resume ckpt/city_lost/best_model_city_lost/score_best_checkpoint.pth
+--resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
 ---
