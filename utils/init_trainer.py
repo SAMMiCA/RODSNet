@@ -15,6 +15,7 @@ from utils.loss import BoundaryAwareFocalLoss, FocalLoss2
 import random
 import numpy as np
 import os
+import re
 
 
 import network
@@ -67,7 +68,13 @@ class InitOpts():
         torch.manual_seed(self.opts.random_seed)
         np.random.seed(self.opts.random_seed)
         random.seed(self.opts.random_seed)
-        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.benchmark = False
+
+        torch.cuda.manual_seed(self.opts.random_seed)
+        torch.cuda.manual_seed_all(self.opts.random_seed)
+        torch.backends.cudnn.determinisitc = True
+
+
 
     def _init_dataloader(self):
         # Setup dataloader
@@ -102,36 +109,83 @@ class InitOpts():
 
     def _init_optimizer(self):
         # Set up metrics
-        self.evaluator = Evaluator(self.opts.num_classes)
+        self.evaluator = Evaluator(self.opts.num_classes, self.opts)
 
         # Set up optimizer
-        fine_tune_factor = 4
-        train_params = [
-            {'params': self.model.random_init_params(), 'lr': self.opts.lr,
-             'weight_decay': self.opts.weight_decay},
-            {'params': self.model.fine_tune_params(), 'lr': self.opts.lr / fine_tune_factor,
-             'weight_decay': self.opts.weight_decay / fine_tune_factor},
-
-        ]
-        if self.opts.train_disparity:
+        if self.opts.optimizer_policy == 'SGD':
             specific_params = list(filter(utils.filter_specific_params,
                                           self.model.named_parameters()))
             base_params = list(filter(utils.filter_base_params,
                                       self.model.named_parameters()))
+
+            feature_extractor_params = list(filter(utils.filter_feature_extractor_params,
+                                                   self.model.named_parameters()))
+
             specific_params = [kv[1] for kv in specific_params]  # kv is a tuple (key, value)
             base_params = [kv[1] for kv in base_params]
-            specific_lr = self.opts.lr
-            disp_lr = self.opts.lr * 10 / fine_tune_factor
-            weight_decay = self.opts.weight_decay / fine_tune_factor
+            feature_extractor_params = [kv[1] for kv in feature_extractor_params]
+            specific_lr = self.opts.lr * 0.1
+            feature_extractor_lr = self.opts.lr
 
-            train_params += [
-                {'params': base_params, 'lr': disp_lr,
-                 'weight_decay': weight_decay},
-                {'params': specific_params, 'lr': specific_lr / fine_tune_factor,
-                 'weight_decay': weight_decay},
+            params_group = [
+                {'params': base_params, 'lr': self.opts.lr},
+                {'params': specific_params, 'lr': specific_lr},
+                {'params': feature_extractor_params, 'lr': feature_extractor_lr},
             ]
 
-        self.optimizer = torch.optim.Adam(train_params, betas=(0.9, 0.99))
+            if self.opts.train_semantic:
+                semantic_params = list(filter(utils.filter_semantic_params,
+                                              self.model.named_parameters()))
+                semantic_params = [kv[1] for kv in semantic_params]
+                semantic_lr = self.opts.lr * 10
+
+                params_group += [
+                    {'params': semantic_params, 'lr': semantic_lr},
+                ]
+
+            self.optimizer = torch.optim.SGD(params_group,
+                                             lr=self.opts.lr, momentum=0.9, weight_decay=self.opts.weight_decay)
+        elif self.opts.optimizer_policy == 'ADAM':
+            # Optimizer
+
+            fine_tune_factor = 4
+            train_params = [
+                {'params': self.model.random_init_params(), 'lr': self.opts.lr,
+                 'weight_decay': self.opts.weight_decay},
+                {'params': self.model.fine_tune_params(), 'lr': self.opts.lr / fine_tune_factor,
+                 'weight_decay': self.opts.weight_decay / fine_tune_factor},
+
+            ]
+
+            if self.opts.train_disparity:
+                specific_params = list(filter(utils.filter_specific_params,
+                                              self.model.named_parameters()))
+                base_params = list(filter(utils.filter_base_params,
+                                          self.model.named_parameters()))
+                specific_params = [kv[1] for kv in specific_params]  # kv is a tuple (key, value)
+                base_params = [kv[1] for kv in base_params]
+                specific_lr = self.opts.lr
+                disp_lr = self.opts.lr * 10 / fine_tune_factor
+                weight_decay = self.opts.weight_decay / fine_tune_factor
+
+                # if self.opts.transfer_disparity:
+                #     specific_lr /= 10
+                #     disp_lr /= 10
+                #     weight_decay /= 10
+
+                train_params += [
+                    {'params': base_params, 'lr': disp_lr,
+                     'weight_decay': weight_decay},
+                    {'params': specific_params, 'lr': specific_lr / fine_tune_factor,
+                     'weight_decay': weight_decay},
+                    # {'params': self.model.disparity_params(), 'lr': (self.opts.lr*10) / (fine_tune_factor),
+                    #  'weight_decay': self.opts.weight_decay / fine_tune_factor},
+                ]
+
+            self.optimizer = torch.optim.Adam(train_params, betas=(0.9, 0.99))
+
+        else:
+            raise NotImplementedError
 
     def _init_criterion(self):
         ''' Set up criterion '''
@@ -149,18 +203,23 @@ class InitOpts():
                 weight = calculate_weigths_labels_new(classes_weights_path, self.opts.dataset,
                                                   self.train_loader, self.opts.num_classes)
 
-            print('\nWhole_datasets pixel ratio:{}'.format(weight))
+            print('Whole_datasets pixel ratio:{}'.format(weight))
             epsilon = self.opts.epsilon  # experimental setup
             weight = 1 / (np.log(1 + epsilon + weight))
-            print('\nrefined pixel ratio for class imbalance:{}'.format(weight))
-            print('\nmax/min ratio:{}'.format(np.max(weight)/np.min(weight)))
+            print('refined pixel ratio for class imbalance:{}'.format(weight))
+            print('max/min ratio:{} \n'.format(np.max(weight)/np.min(weight)))
             weight = torch.from_numpy(weight.astype(np.float32))
         else:
             weight = None
 
         if self.opts.train_semantic:
-            self.criterion = BoundaryAwareFocalLoss(gamma=.5, num_classes=self.opts.num_classes,
-                                                    ignore_id=255, weight=weight, device=self.device, opts=self.opts)
+            if self.opts.without_balancing:
+                self.criterion = FocalLoss2(gamma=.5, num_classes=self.opts.num_classes,
+                                            ignore_id=255, weight=weight, device=self.device)
+            else:
+                self.criterion = BoundaryAwareFocalLoss(gamma=.5, num_classes=self.opts.num_classes,
+                                                        ignore_id=255, weight=weight, device=self.device,
+                                                        opts=self.opts)
 
         # disparity Loss weights
         self.pyramid_weight = {
@@ -178,14 +237,18 @@ class InitOpts():
 
         self.best_epe = 999.0
         self.best_score = 0.0
+        self.best_obs_score = 0.0
         self.best_epe_epoch = -1
         self.best_score_epoch = -1
+        self.best_obs_score_epoch = -1
 
         if self.opts.resume is not None:
+            self.opts.resume = os.path.join(self.opts.resume_dir, self.opts.resume)
             if not os.path.isfile(self.opts.resume):
                 raise RuntimeError("=> no checkpoint found at '{}'" .format(self.opts.resume))
+            # https://github.com/VainF/DeepLabV3Plus-Pytorch/issues/8#issuecomment-605601402, @PytaichukBohdan
             checkpoint = torch.load(self.opts.resume, map_location=self.device)
-            self._init_multi_gpu_setting()
+            self.model.to(self.device)
             loaded_pt = checkpoint['model_state']
             model_dict = self.model.state_dict()
 
@@ -198,6 +261,11 @@ class InitOpts():
                 self.best_epe = checkpoint['best_epe']
                 self.best_score_epoch = checkpoint['best_score_epoch']
                 self.best_epe_epoch = checkpoint['best_epe_epoch']
+
+                if 'best_obs_score' in checkpoint.keys():
+                    self.best_obs_score = checkpoint['best_obs_score']
+                if 'best_obs_score_epoch' in checkpoint.keys():
+                    self.best_obs_score_epoch = checkpoint['best_obs_score_epoch']
 
                 # 1. filter out unnecessary keys
                 pretrained_dict = {k: v for k, v in loaded_pt.items() if k in model_dict}
@@ -223,16 +291,30 @@ class InitOpts():
                 print("Just Testing results of pretrained network model...")
                 print("If you want to continue training with checkpoints, add --continue_training options!")
                 # 1. filter out unnecessary keys
-                pretrained_dict = {k: v for k, v in loaded_pt.items() if k in model_dict}
+                pretrained_dict = {}
+                for k, v in loaded_pt.items():
+                    split_key = k.split('.')
+                    main_key = split_key[0]
+                    remain_key = split_key[1:]
+                    if re.sub(r'[0-9]+', '', main_key) == 'refinement_new':
+                        # print('find ' + k)
+                        ch_k = 'refinement_new.' + ".".join(remain_key)
+                        # print('change it to ' + ch_k)
+                        pretrained_dict[ch_k] = v
+                    elif (k in model_dict):
+                        # print("matched " + k)
+                        pretrained_dict[k] = v
+                    else:
+                        pass
                 # 2. overwrite entries in the existing state dict
                 model_dict.update(pretrained_dict)
                 # 3. load the new state dict
                 self.model.load_state_dict(model_dict, strict=False)
 
-            del checkpoint  # free memory
+            del checkpoint, pretrained_dict  # free memory
         else:
             print("[!] No checkpoints found, Retrain...")
-            self._init_multi_gpu_setting()
+            self.model.to(self.device)
 
         if self.opts.dataset == 'kitti_mix':
             # freeze semantic modules
@@ -249,12 +331,10 @@ class InitOpts():
     def _init_scheduler(self):
         # lr_min = 1e-6
         lr_min = self.opts.last_lr
-        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.opts.epochs, lr_min)
-
-    def _init_multi_gpu_setting(self):
-        if self.n_gpus > 1:
-            self.model = nn.DataParallel(self.model)
-        self.model.to(self.device)
+        if self.opts.continue_training:
+            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.opts.epochs, lr_min, last_epoch=self.cur_epochs)
+        else:
+            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.opts.epochs, lr_min)
 
     def _init_saver(self):
         # Define Saver
