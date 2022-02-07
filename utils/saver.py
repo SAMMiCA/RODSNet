@@ -15,6 +15,7 @@ class Saver(object):
         run_id = int(self.runs[-1].split('_')[-1]) + 1 if self.runs else 0
 
         self.experiment_dir = os.path.join(self.directory, 'experiment_{}'.format(str(run_id)))
+        self.experiment_dir = os.path.join(self.args.save_dir, self.experiment_dir)
         if not os.path.exists(self.experiment_dir):
             os.makedirs(self.experiment_dir)
 
@@ -39,6 +40,13 @@ class Saver(object):
     def save_checkpoint(self, state, is_best, best_type, filename='latest_checkpoint.pth'):  # filename from .pth.tar change to .pth?
         """Saves checkpoint to disk"""
 
+        save_to_dataset = False
+
+        if save_to_dataset:
+            self.experiment_dir = os.path.join('/root/dataset/', self.experiment_dir)
+            if not os.path.exists(self.experiment_dir):
+                os.makedirs(self.experiment_dir)
+
         if is_best:
             if best_type == 'epe':
                 best_pred = state['best_epe']
@@ -54,6 +62,19 @@ class Saver(object):
                     typo = str(best_pred) + "in epoch :{}".format(state['best_score_epoch'])
                     f.write(typo)
                 filename = os.path.join(self.experiment_dir, best_type+'_best_checkpoint.pth')
+                torch.save(state, filename)
+
+            elif best_type == 'obs_score':
+                best_pred = state['best_obs_score']
+                with open(os.path.join(self.experiment_dir, 'best_obs_score_pred.txt'), 'w') as f:
+                    typo = str(best_pred) + "in epoch :{}".format(state['best_obs_score_epoch'])
+                    f.write(typo)
+                filename = os.path.join(self.experiment_dir, best_type+'_best_checkpoint.pth')
+                torch.save(state, filename)
+
+            elif best_type == 'epoch':
+                epoch_num = state['epoch']
+                filename = os.path.join(self.experiment_dir, best_type+ str(epoch_num) + '_checkpoint.pth')
                 torch.save(state, filename)
 
             else:
@@ -78,6 +99,11 @@ class Saver(object):
             f.write('thres3: %.4f\t' % thres3)
             f.write('mIoU: %.4f\t' % mIoU)
             f.write('Acc: %.4f\n' % Acc)
+
+    def save_file_return(self, filename='val_results.txt'):
+        val_file = os.path.join(self.experiment_dir, filename)
+
+        return val_file
 
     def save_experiment_config(self):
         logfile = os.path.join(self.experiment_dir, 'parameters.txt')
