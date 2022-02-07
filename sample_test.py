@@ -24,13 +24,14 @@ import numpy as np
 import os
 import network
 from dataloaders.datasets import Cityscapes, CityLostFound
-from dataloaders import custom_transforms as sw
+from dataloaders import custom_transforms2 as sw
 import skimage.io
 from tqdm import tqdm
 from matplotlib import pyplot as plt
 from PIL import Image
 from collections import namedtuple
-
+import time
+import re
 
 CityscapesClass = namedtuple('CityscapesClass', ['name', 'id', 'train_id', 'category', 'category_id',
                                                  'has_instances', 'ignore_in_eval', 'color'])
@@ -88,6 +89,9 @@ def check_path(path):
 
 def file_to_tensor(filename):
     pil_img = Image.open(filename).convert('RGB')
+    # pil_img = pil_img.resize((768,512))
+    pil_img = pil_img.resize((1280,640))
+    print(pil_img.size)
     img = np.array(pil_img, dtype=np.float32)
     img = np.ascontiguousarray(np.transpose(img, (2, 0, 1)))
     return pil_img, torch.from_numpy(img)
@@ -99,7 +103,7 @@ def decode_target(target):
     return train_id_to_color[target]
 
 
-
+# for submit to KITTI 2015 test benchmark
 if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = opts.gpu_id
     device = torch.device('cuda:{}'.format(opts.gpu_id) if torch.cuda.is_available() else 'cpu')
@@ -126,7 +130,7 @@ if __name__ == '__main__':
                              )
     model.to(device)
 
-    evaluator = Evaluator(opts.num_classes)
+    evaluator = Evaluator(opts.num_classes, opts)
 
     if opts.resume is not None:
         if not os.path.isfile(opts.resume):
@@ -137,12 +141,28 @@ if __name__ == '__main__':
         loaded_pt = checkpoint['model_state']
         model_dict = model.state_dict()
 
+        print("Just Testing sample results of pretrained network model...")
         # 1. filter out unnecessary keys
-        pretrained_dict = {k: v for k, v in loaded_pt.items() if k in model_dict}
+        pretrained_dict = {}
+        for k, v in loaded_pt.items():
+            split_key = k.split('.')
+            main_key = split_key[0]
+            remain_key = split_key[1:]
+            if re.sub(r'[0-9]+', '', main_key) == 'refinement_new':
+                # print('find ' + k)
+                ch_k = 'refinement_new.' + ".".join(remain_key)
+                # print('change it to ' + ch_k)
+                pretrained_dict[ch_k] = v
+            elif (k in model_dict):
+                # print("matched " + k)
+                pretrained_dict[k] = v
+            else:
+                pass
         # 2. overwrite entries in the existing state dict
         model_dict.update(pretrained_dict)
         # 3. load the new state dict
         model.load_state_dict(model_dict, strict=False)
+
     else:
         print("[!] No checkpoints found...")
         raise NotImplementedError
@@ -153,76 +173,98 @@ if __name__ == '__main__':
     # Inference
     model.eval()
     inference_time = 0
+    sample_ID = [0, 1, 2, 3, 4, 5]
 
-    for ID in range(8):
-        left_filename = 'samples/left/' + str(ID) + '_left.png'
-        right_filename = 'samples/right/' + str(ID) + '_right.png'
+    with torch.no_grad():
+        for ID in range(0, 14):
+            left_filename = 'samples/left/' + str(ID) + '_left.png'
+            right_filename = 'samples/right/' + str(ID) + '_right.png'
 
-        pil_left, left = file_to_tensor(left_filename)
-        pil_right, right = file_to_tensor(right_filename)
+            pil_left, left = file_to_tensor(left_filename)
+            pil_right, right = file_to_tensor(right_filename)
 
-        left = left.to(device, dtype=torch.float32)
-        right = right.to(device, dtype=torch.float32)
+            left = left.to(device, dtype=torch.float32)
+            right = right.to(device, dtype=torch.float32)
 
-        left = left.unsqueeze(0)
-        right = right.unsqueeze(0)
+            print(left.shape)
 
-        # Pad
-        ori_height, ori_width = left.size()[2:]
-        # set height and width sizes to divided by 128
-        if ori_height % 128 != 0:
-            val_height = ((ori_height // 128) +1)*128
-        else:
-            val_height = ori_height
-        if ori_width % 128 != 0:
-            val_width = ((ori_width // 128) + 1)*128
-        else:
-            val_width = ori_width
+            left = left.unsqueeze(0)
+            right = right.unsqueeze(0)
 
-        if ori_height < val_height or ori_width < val_width:
-            top_pad = opts.val_img_height - ori_height
-            right_pad = opts.val_img_width - ori_width
+            # Pad
+            ori_height, ori_width = left.size()[2:]
 
-            # Pad size: (left_pad, right_pad, top_pad, bottom_pad)
-            left = F.pad(left, (0, right_pad, top_pad, 0))
-            right = F.pad(right, (0, right_pad, top_pad, 0))
+            # set height and width sizes to divided by 128
+            if ori_height % 128 != 0:
+                val_height = ((ori_height // 128) +1)*128
+            else:
+                val_height = ori_height
+            if ori_width % 128 != 0:
+                val_width = ((ori_width // 128) + 1)*128
+            else:
+                val_width = ori_width
+
+            if ori_height < val_height or ori_width < val_width:
+                top_pad = opts.val_img_height - ori_height
+                right_pad = opts.val_img_width - ori_width
+
+                # Pad size: (left_pad, right_pad, top_pad, bottom_pad)
+                left = F.pad(left, (0, right_pad, top_pad, 0))
+                right = F.pad(right, (0, right_pad, top_pad, 0))
+
+            # warming up
+            if ID == 0:
+                left_temp = left.clone()
+                right_temp = right.clone()
+                for j in range(5):
+                    model_start = time.time()
+                    pred_disp_pyramid, left_seg = model(left_temp, right_temp)
+                    model_time = time.time() - model_start
+                    # time.sleep(0.1)  # to avoid overheating the GPU too much
 
 
-        with torch.no_grad():
+            model_start = time.time()
             pred_disp_pyramid, left_seg = model(left, right)
+            model_time = time.time() - model_start
             pred_disp = pred_disp_pyramid[-1]
 
-        image = left[0].detach().cpu().numpy()
-        right_image = right[0].detach().cpu().numpy()
-        preds = left_seg.detach().max(dim=1)[1].cpu().numpy()
+            image = left[0].detach().cpu().numpy()
+            right_image = right[0].detach().cpu().numpy()
+            preds = left_seg.detach().max(dim=1)[1].cpu().numpy()
 
-        # Crop
-        if ori_height < opts.val_img_height or ori_width < opts.val_img_width:
-            if right_pad != 0:
-                pred_disp = pred_disp[:, top_pad:, :-right_pad]
-                image = image[:, top_pad:, :-right_pad]
-                right_image = right_image[:, top_pad:, :-right_pad]
-                preds = preds[:, top_pad:, :-right_pad]
+            # Crop
+            if ori_height < val_height or ori_width < val_width:
+                if right_pad != 0:
+                    pred_disp = pred_disp[:, top_pad:, :-right_pad]
+                    image = image[:, top_pad:, :-right_pad]
+                    right_image = right_image[:, top_pad:, :-right_pad]
+                    preds = preds[:, top_pad:, :-right_pad]
 
-            else:
-                pred_disp = pred_disp[:, top_pad:]
-                image = image[:, top_pad:]
-                right_image = right_image[:, top_pad:]
-                preds = preds[:, top_pad:]
+                else:
+                    pred_disp = pred_disp[:, top_pad:]
+                    image = image[:, top_pad:]
+                    right_image = right_image[:, top_pad:]
+                    preds = preds[:, top_pad:]
+
+            disp = pred_disp[0].detach().cpu().numpy()  # [H, W]
+            save_name = 'results/' + str(ID) + '_disp.png'
+            save_name_disp = os.path.join('samples', save_name)
+            check_path(os.path.dirname(save_name_disp))
+            plt.imsave(save_name_disp, disp, cmap='magma')
+
+            pred = preds[0]
+            pred = decode_target(pred).astype(np.uint8)
+            pred = Image.fromarray(pred)
+
+            save_name = 'results/' + str(ID) + '_pred.png'
+            save_name_pred = os.path.join('samples', save_name)
+            pred.save(save_name_pred)
 
 
-        disp = pred_disp[0].detach().cpu().numpy()  # [H, W]
-        save_name = 'results/' + str(ID) + '_disp.png'
-        save_name_disp = os.path.join('samples', save_name)
-        check_path(os.path.dirname(save_name_disp))
-        plt.imsave(save_name_disp, disp, cmap='magma')
+            overlay = Image.blend(pil_left, pred, alpha=0.7)
+            save_name = 'results/' + str(ID) + '_overlay.png'
+            save_name_sem = os.path.join('samples', save_name)
+            overlay.save(save_name_sem)
+            print('%d th results are saved in samples/results folder with %.2f speed' % (ID, model_time))
 
-        pred = preds[0]
-        pred = decode_target(pred).astype(np.uint8)
-        pred = Image.fromarray(pred)
 
-        overlay = Image.blend(pil_left, pred, alpha=0.7)
-        save_name = 'results/' + str(ID) + '_overlay.png'
-        save_name_sem = os.path.join('samples', save_name)
-        overlay.save(save_name_sem)
-        print('%d th results are saved in samples/results folder' % ID)
