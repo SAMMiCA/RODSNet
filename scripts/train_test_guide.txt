@@ -136,14 +136,12 @@ python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_citysc
     --resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
     --epsilon 1e-1
     
-    # for test (full-size image)
-    python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resnet18_train_refine_new18_test \
-    --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+    # for test (full-size image)   
+    python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet_2x \
     --with_refine --refinement_type new18 \
-    --batch_size 4 --val_batch_size 4 \
+    --val_batch_size 1 \
     --train_semantic --train_disparity \
-    --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth \
-    --epsilon 1e-1 --test_only
+    --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth --test_only
     
 # RODSNet-3x
     # for training
@@ -155,14 +153,13 @@ python main.py --gpu_id 0 --dataset cityscapes --checkname resnet18_train_citysc
     --resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
     --epsilon 1e-1
     
-    # for test (full-size image)
-    python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resnet18_train_refine_new33_test \
-    --optimizer_policy ADAM --lr 4e-4 --weight_decay 1e-4 --epochs 400 \
+    # for test (full-size image)   
+    python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet_3x \
     --with_refine --refinement_type new33 \
-    --batch_size 4 --val_batch_size 4 \
+    --val_batch_size 1 \
     --train_semantic --train_disparity \
-    --resume ckpt/city_lost/RODSNet_3x/checkpoint.pth \
-    --epsilon 1e-1 --test_only
+    --resume ckpt/city_lost/RODSNet_3x/score_best_checkpoint.pth --test_only
+    
 
 # ---------------------------------------------------------------------------------------------------------------------
 ## sample test
