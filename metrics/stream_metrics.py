@@ -132,9 +132,16 @@ class TimeAverageMeter(object):
 
 
 class Evaluator(object):
-    def __init__(self, num_class):
+    def __init__(self, num_class, opts):
         self.num_class = num_class
+        self.opts = opts
         self.confusion_matrix = np.zeros((self.num_class,)*2)  # shape:(num_class, num_class)
+        if not self.opts.without_depth_range_miou:
+            self.confusion_matrix_depth = {'20': np.zeros((self.num_class,) * 2),
+                                           '40': np.zeros((self.num_class,) * 2),
+                                           '60': np.zeros((self.num_class,) * 2),
+                                           '80': np.zeros((self.num_class,) * 2),
+                                           '100': np.zeros((self.num_class,) * 2)}
 
     def Pixel_Accuracy(self):
         Acc = np.diag(self.confusion_matrix).sum() / self.confusion_matrix.sum()
@@ -167,7 +174,7 @@ class Evaluator(object):
         Acc = np.nanmean(Acc)
         return Acc
 
-    def Mean_Intersection_over_Union(self):
+    def Mean_Intersection_over_Union(self, save_filename):
         MIoU = np.diag(self.confusion_matrix) / (
                     np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
                     np.diag(self.confusion_matrix))
@@ -196,6 +203,50 @@ class Evaluator(object):
         if self.num_class == 20:
             print("small obstacles: %.6f" % (MIoU[19] * 100.0), "%\t")
 
+        # Save validation results
+        with open(save_filename, 'a') as f:
+            f.write('-----------IoU of each classes-----------')
+            f.write("road         : %.6f \n" % (MIoU[0] * 100.0))
+            f.write("sidewalk     : %.6f \n" % (MIoU[1] * 100.0))
+            f.write("building     : %.6f\n" % (MIoU[2] * 100.0))
+            f.write("wall         : %.6f\n" % (MIoU[3] * 100.0))
+            f.write("fence        : %.6f\n" % (MIoU[4] * 100.0))
+            f.write("pole         : %.6f\n" % (MIoU[5] * 100.0))
+            f.write("traffic light: %.6f\n" % (MIoU[6] * 100.0))
+            f.write("traffic sign : %.6f\n" % (MIoU[7] * 100.0))
+            f.write("vegetation   : %.6f\n" % (MIoU[8] * 100.0))
+            f.write("terrain      : %.6f\n" % (MIoU[9] * 100.0))
+            f.write("sky          : %.6f\n" % (MIoU[10] * 100.0))
+            f.write("person       : %.6f\n" % (MIoU[11] * 100.0))
+            f.write("rider        : %.6f\n" % (MIoU[12] * 100.0))
+            f.write("car          : %.6f\n" % (MIoU[13] * 100.0))
+            f.write("truck        : %.6f\n" % (MIoU[14] * 100.0))
+            f.write("bus          : %.6f\n" % (MIoU[15] * 100.0))
+            f.write("train        : %.6f\n" % (MIoU[16] * 100.0))
+            f.write("motorcycle   : %.6f\n" % (MIoU[17] * 100.0))
+            f.write("bicycle      : %.6f\n" % (MIoU[18] * 100.0))
+            if self.num_class == 20:
+                f.write("small obstacles: %.6f\n" % (MIoU[19] * 100.0))
+
+        obs_mIoU = MIoU[19]
+        MIoU = np.nanmean(MIoU)
+        return MIoU, obs_mIoU
+
+    def Mean_Intersection_over_Union_with_depth(self, d_range, save_filename):
+        cf_matrix = self.confusion_matrix_depth[str(d_range)]
+
+        MIoU = np.diag(cf_matrix) / (
+                    np.sum(cf_matrix, axis=1) + np.sum(cf_matrix, axis=0) -
+                    np.diag(cf_matrix))
+
+        # print MIoU of each class
+        print('-----------IoU of each classes-----------')
+        if self.num_class == 20:
+            print("small obstacles: %.6f" % (MIoU[19] * 100.0), "%\t")
+
+            with open(save_filename, 'a') as f:
+                f.write("small obstacles: %.6f \n" % (MIoU[19] * 100.0))
+
         MIoU = np.nanmean(MIoU)
         return MIoU
 
@@ -219,6 +270,28 @@ class Evaluator(object):
         assert gt_image.shape == pre_image.shape
         self.confusion_matrix += self._generate_matrix(gt_image, pre_image)
 
+    def _generate_matrix_with_depth(self, gt_image, pre_image, mask):
+        label = self.num_class * gt_image[mask].astype('int') + pre_image[mask]
+        count = np.bincount(label, minlength=self.num_class**2)
+        confusion_matrix = count.reshape(self.num_class, self.num_class)
+
+        return confusion_matrix
+
+    def add_batch_with_depth(self, gt_image, pre_image, disp):
+        assert gt_image.shape == pre_image.shape
+        mask = (gt_image >= 0) & (gt_image < self.num_class)
+        depth_range = [20, 40, 60, 80, 100]
+
+        self.confusion_matrix += self._generate_matrix_with_depth(gt_image, pre_image, mask)
+
+        for d_range in depth_range:
+            if d_range == 20:
+                disp_mask = mask & (disp >= 483 / d_range)  # focal_length*base_line : 2300pixel * 0.21m
+            else:
+                disp_mask = mask & (disp >= 483 / d_range) & (disp < (483 / (d_range - 20)))
+            self.confusion_matrix_depth[str(d_range)] += self._generate_matrix_with_depth(gt_image, pre_image, disp_mask)
+
+
     def get_results(self):
         """Returns accuracy score evaluation result.
             - overall accuracy
@@ -231,6 +304,7 @@ class Evaluator(object):
         acc_cls = np.diag(hist) / hist.sum(axis=1)
         acc_cls = np.nanmean(acc_cls)
         iu = np.diag(hist) / (hist.sum(axis=1) + hist.sum(axis=0) - np.diag(hist))
+        obs_iu = iu[19]
         mean_iu = np.nanmean(iu)
         freq = hist.sum(axis=1) / hist.sum()
         fwavacc = (freq[freq > 0] * iu[freq > 0]).sum()
@@ -242,6 +316,7 @@ class Evaluator(object):
                 "FreqW Acc": fwavacc,
                 "Mean IoU": mean_iu,
                 "Class IoU": cls_iu,
+                "Obstacle IoU": obs_iu,
             }
 
     @staticmethod
@@ -255,3 +330,9 @@ class Evaluator(object):
 
     def reset(self):
         self.confusion_matrix = np.zeros((self.num_class,) * 2)
+        if not self.opts.without_depth_range_miou:
+            self.confusion_matrix_depth = {'20': np.zeros((self.num_class,) * 2),
+                                           '40': np.zeros((self.num_class,) * 2),
+                                           '60': np.zeros((self.num_class,) * 2),
+                                           '80': np.zeros((self.num_class,) * 2),
+                                           '100': np.zeros((self.num_class,) * 2)}
