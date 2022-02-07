@@ -8,8 +8,8 @@ pair of stereo RGB images to infer semantic segmentation and disparity map simul
 small obstacles (in brown).*
 
 
-Base Feature Extraction             |  Initial Estimation of Semantic segmentation and Disparity prediction
-:----------------------------------:|:-------------------------:
+Base Feature Extraction                      |  Initial Estimation of Semantic segmentation and Disparity prediction
+:-------------------------------------------:|:----------------------------------------------------------------------:
 ![](doc/overall_network_v3_basefeatext.png)  |  ![](doc/overall_network_v3_initial_est.png)
 
 Base feature extraction: Intermediate features of the same scale are each summed to yield multi-scale base features
