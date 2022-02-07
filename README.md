@@ -132,12 +132,14 @@ python main.py --gpu_id 0 --dataset city_lost --checkname resnet18_train_citylos
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
 
 To evaluate our performance on `city_lost` dataset with pretrained results:
+
 RODSNet-1x :
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet_1x \
 --with_refine  --refinement_type ours --val_batch_size 1 --train_semantic --train_disparity --epsilon 1e-1 \
 --resume ckpt/city_lost/RODSNet_1x/score_best_checkpoint.pth --test_only
 ```
+
 RODSNet-2x :
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet_2x \
