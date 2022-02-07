@@ -181,7 +181,7 @@ python sample_test.py --gpu_id 0 \
 --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
-You can see the results of pre-trained RODSNet-2x which are tested on various environments (*kitti, lost and found, cityscapes, carla simulation, real worlds*) in the `samples/RODSNet-2x_results` folder.
+You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*kitti, lost and found, cityscapes, carla simulation, real worlds*) in the `samples/RODSNet-2x_results` folder.
 
 ---
 
