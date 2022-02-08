@@ -45,6 +45,10 @@ class Trainer(InitOpts):
 
         self.evaluator.reset()
 
+        if self.opts.disp_to_obst_ch or self.opts.disp_plus_1_to_obst_ch:
+            seg_disp = torch.ones((self.opts.batch_size, self.opts.num_classes,
+                                   768, 768)).to(self.device, dtype=torch.float32)
+
         last_data_time = time.time()
         for i, sample in enumerate(self.train_loader):
             data_loader_time = time.time() - last_data_time
@@ -69,7 +73,11 @@ class Trainer(InitOpts):
             self.optimizer.zero_grad()
 
             if self.opts.train_semantic and self.opts.train_disparity:
-                pred_disp_pyramid, left_seg = self.model(left, right)
+                if self.opts.disp_to_obst_ch or self.opts.disp_plus_1_to_obst_ch:
+                    pred_disp_pyramid, left_seg = self.model(left, right, seg_disp=seg_disp)
+                else:
+                    pred_disp_pyramid, left_seg = self.model(left, right)
+
                 pred_disp = pred_disp_pyramid[-1]
                 pyramid_weight = self.pyramid_weight[len(pred_disp_pyramid)]
                 assert len(pyramid_weight) == len(pred_disp_pyramid)
@@ -125,31 +133,6 @@ class Trainer(InitOpts):
                 print_cycle = 0.0
                 data_cycle = 0.0
 
-            if self.num_iter % self.opts.summary_freq == 0:
-                summary_time_start = time.time()
-                # calculate segmentation scores
-                if self.opts.dataset != 'kitti_mix':
-                    if self.opts.train_semantic and self.opts.train_disparity:
-                        preds = left_seg.detach().max(dim=1)[1].cpu().numpy()
-                        targets = labels.cpu().numpy()
-                        self.evaluator.add_batch(targets, preds)
-                        score = self.evaluator.get_results()
-                    elif self.opts.train_semantic and not self.opts.train_disparity:
-                        preds = left_seg.detach().max(dim=1)[1].cpu().numpy()
-                        targets = labels.cpu().numpy()
-                        self.evaluator.add_batch(targets, preds)
-                        score = self.evaluator.get_results()
-                    elif not self.opts.train_semantic and self.opts.train_disparity:
-                        score = None
-                    else:
-                        raise NotImplementedError
-                else:
-                    score = None
-
-                # calculate disparity accuracy
-                self.performance_check_train(disp_loss, total_loss, pred_disp, gt_disp, mask, score)
-                summary_time = time.time() - summary_time_start
-                print("summary_time : {}".format(summary_time))
             last_data_time = time.time()
             del total_loss, sample
 
@@ -175,19 +158,28 @@ class Trainer(InitOpts):
         mean_epe, mean_d1, mean_thres1, mean_thres2, mean_thres3 = 0, 0, 0, 0, 0
         num_val = len(self.val_loader)
 
+        if self.opts.test_only:
+            save_filename = self.saver.save_file_return()
+
         with torch.no_grad():
+
             start = time.time()
+            if self.opts.disp_to_obst_ch or self.opts.disp_plus_1_to_obst_ch:
+                seg_disp = torch.ones((self.opts.val_batch_size, self.opts.num_classes, self.opts.val_img_height,
+                                       self.opts.val_img_width)).to(self.device, dtype=torch.float32)
+
             for i, sample in enumerate(self.val_loader):
                 data_time = time.time() - start
                 self.time_val_dataloader.append(data_time)
 
                 left = sample['left'].to(self.device, dtype=torch.float32)
                 right = sample['right'].to(self.device, dtype=torch.float32)
+                B, C, H, W = left.shape
 
-                # # Warm-up
-                # if i == 0:
-                #     with torch.no_grad():
-                #             self.model(left, right)
+                if self.opts.disp_to_obst_ch or self.opts.disp_plus_1_to_obst_ch:
+                    if (seg_disp.shape[0] != B):
+                        seg_disp = torch.ones((B, self.opts.num_classes, self.opts.val_img_height,
+                                               self.opts.val_img_width)).to(self.device, dtype=torch.float32)
 
                 if 'label' in sample.keys():
                     labels = sample['label'].to(self.device, dtype=torch.long)
@@ -203,12 +195,15 @@ class Trainer(InitOpts):
                 valid_samples += 1
                 start_time = time.time()
                 if self.opts.train_semantic and self.opts.train_disparity:
-                    pred_disp_pyramid, left_seg = self.model(left, right)
-                    model_time = time.time()
-                    fwt = model_time - start_time
+                    if self.opts.disp_to_obst_ch or self.opts.disp_plus_1_to_obst_ch:
+                        pred_disp_pyramid, left_seg = self.model(left, right, seg_disp=seg_disp)
+                    else:
+                        pred_disp_pyramid, left_seg = self.model(left, right)
+                    fwt = time.time() - start_time
                     pred_disp = pred_disp_pyramid[-1]
                     pred_disp = self.resize_pred_disp(pred_disp, gt_disp)
 
+                    metric_start = time.time()
                     val_epe, val_d1, val_thres1, val_thres2, val_thres3 = \
                         self.calculate_disparity_error(pred_disp, gt_disp, mask,
                                                        val_epe, val_d1, val_thres1, val_thres2, val_thres3)
@@ -216,8 +211,14 @@ class Trainer(InitOpts):
                     if self.opts.dataset != 'kitti_mix':
                         preds = left_seg.detach().max(dim=1)[1].cpu().numpy()
                         targets = labels.cpu().numpy()
-                        self.evaluator.add_batch(targets, preds)
-                    evaluate_time = time.time() - model_time
+                        gt_disp_ = gt_disp.cpu().numpy()
+
+                        if self.opts.without_depth_range_miou:
+                            self.evaluator.add_batch(targets, preds)
+                        else:
+                            self.evaluator.add_batch_with_depth(targets, preds, gt_disp_)
+
+                    metric_end = time.time()
                     # print('calculate mIoU accuracy time1 : %.3f, time2 : %.3f' % (time1 - time0, time.time()-time1))
                 elif self.opts.train_semantic and not self.opts.train_disparity:
                     left_seg = self.model(left, right)
@@ -241,14 +242,23 @@ class Trainer(InitOpts):
                     raise NotImplementedError
 
                 # first batch stucked on some process.. --> time cost is wierd on i==0
-                if i != 0:
+                if i not in [0,1,2,3,4]:
                     self.time_val.append(fwt)
                     if i % self.opts.val_print_freq == 0:
                         # check validation fps
-                        print("[%d/%d] Model passed time (bath size=%d): %.3f (Mean time per img: %.3f), Dataloader time : %.3f" % (
+                        print("[%d/%d] Model passed time (bath size=%d): %.3f (Mean time per img: %.3f), "
+                              "Dataloader time : %.3f, Evaluation Metric time per batch: %.3f" % (
                             i, num_val,
                             self.opts.val_batch_size, fwt,
-                            sum(self.time_val) / len(self.time_val) / self.opts.val_batch_size, data_time))
+                            sum(self.time_val) / len(self.time_val) / self.opts.val_batch_size, data_time, metric_end-metric_start))
+                        if self.opts.test_only:
+                            with open(save_filename, 'a') as f:
+                                f.write("[%d/%d] Model passed time (bath size=%d): %.3f (Mean time per img: %.3f), "
+                                          "Dataloader time : %.3f, Evaluation Metric time per batch: %.3f \n" % (
+                                            i, num_val,
+                                            self.opts.val_batch_size, fwt,
+                                            sum(self.time_val) / len(self.time_val) / self.opts.val_batch_size, data_time, metric_end-metric_start))
+
 
                 if self.opts.save_val_results:
                     # save all validation results images
@@ -285,12 +295,21 @@ class Trainer(InitOpts):
         if not self.opts.test_only:
             self.save_checkpoints(mean_epe, score)
 
+            if self.opts.save_pth_every_epoch:
+                self.save_checkpoints(mean_epe, score, is_best=True, best_type='epoch')
+
             if self.opts.train_semantic and self.opts.dataset != 'kitti_mix':
                 if score['Mean IoU'] > self.best_score:  # save best model
                     self.best_score = score['Mean IoU']
                     self.best_score_epoch = self.cur_epochs
                     self.save_checkpoints(mean_epe, score, is_best=True, best_type='score')
                 print('\nbest score epoch: {}, best score: {}'.format(self.best_score_epoch, self.best_score))
+
+                if score["Obstacle IoU"] > self.best_obs_score:
+                    self.best_obs_score = score["Obstacle IoU"]
+                    self.best_obs_score_epoch = self.cur_epochs
+                    self.save_checkpoints(mean_epe, score, is_best=True, best_type='obs_score')
+                print('\nbest obstacle score epoch: {}, best obstacle score: {}'.format(self.best_obs_score_epoch, self.best_obs_score))
 
             if self.opts.train_disparity:
                 if self.opts.dataset == 'kitti_2015' or self.opts.dataset == 'kitti_mix':
@@ -325,8 +344,10 @@ class Trainer(InitOpts):
             'score': score,
             'best_score': self.best_score,
             'best_epe': self.best_epe,
+            'best_obs_score': self.best_obs_score,
             'best_score_epoch': self.best_score_epoch,
-            'best_epe_epoch': self.best_epe_epoch
+            'best_epe_epoch': self.best_epe_epoch,
+            'best_obs_score_epoch': self.best_obs_score_epoch
         }, is_best, best_type)
 
     def performance_check_train(self, disp_loss, total_loss, pred_disp, gt_disp, mask, score):
@@ -358,14 +379,17 @@ class Trainer(InitOpts):
         print('Validation:')
         print('[Epoch: %d]' % (self.cur_epochs))
 
+        save_filename = self.saver.save_file_return()
+
         if self.opts.train_semantic and self.opts.dataset != 'kitti_mix':
             Acc = self.evaluator.Pixel_Accuracy()
             Acc_class = self.evaluator.Pixel_Accuracy_Class()
-            mIoU = self.evaluator.Mean_Intersection_over_Union()
+            mIoU, obs_mIoU = self.evaluator.Mean_Intersection_over_Union(save_filename)
             FWIoU = self.evaluator.Frequency_Weighted_Intersection_over_Union()
 
             if not self.opts.test_only:
                 self.writer.add_scalar('val/mIoU', mIoU, self.cur_epochs)
+                self.writer.add_scalar('val/obs_mIoU', obs_mIoU, self.cur_epochs)
                 self.writer.add_scalar('val/Acc', Acc, self.cur_epochs)
                 self.writer.add_scalar('val/Acc_class', Acc_class, self.cur_epochs)
                 self.writer.add_scalar('val/fwIoU', FWIoU, self.cur_epochs)
@@ -390,6 +414,55 @@ class Trainer(InitOpts):
               " epe:{}, d1:{}, thres1:{}, thres2:{} thres3:{}".format(Acc, Acc_class, mIoU, FWIoU,
                                                                       mean_epe, mean_d1,
                                                                       mean_thres1, mean_thres2, mean_thres3))
+
+        if self.opts.without_depth_range_miou:
+            print('not used depth range calc')
+        else:
+            ## Validation test with different depth
+            mIoU_0_20 = self.evaluator.Mean_Intersection_over_Union_with_depth(20, save_filename)
+            print('depth: 0~20m ')
+            print('20 class mIoU: {} \n'.format(mIoU_0_20))
+            if not self.opts.test_only:
+                self.writer.add_scalar('val/0_20_obs_mIoU', mIoU_0_20, self.cur_epochs)
+            with open(save_filename, 'a') as f:
+                f.write('depth: 0~20m ')
+                f.write('20 class mIoU: {} \n'.format(mIoU_0_20))
+
+            mIoU_20_40 = self.evaluator.Mean_Intersection_over_Union_with_depth(40, save_filename)
+            print('depth: 20~40m ')
+            print('20 class mIoU: {} \n'.format(mIoU_20_40))
+            if not self.opts.test_only:
+                self.writer.add_scalar('val/20_40_obs_mIoU', mIoU_20_40, self.cur_epochs)
+            with open(save_filename, 'a') as f:
+                f.write('depth: 20~40m ')
+                f.write('20 class mIoU: {} \n'.format(mIoU_20_40))
+
+            mIoU_40_60 = self.evaluator.Mean_Intersection_over_Union_with_depth(60, save_filename)
+            print('depth: 40~60m ')
+            print('20 class mIoU: {} \n'.format(mIoU_40_60))
+            if not self.opts.test_only:
+                self.writer.add_scalar('val/40_60_obs_mIoU', mIoU_40_60, self.cur_epochs)
+            with open(save_filename, 'a') as f:
+                f.write('depth: 40~60m ')
+                f.write('20 class mIoU: {} \n'.format(mIoU_40_60))
+
+            mIoU_60_80 = self.evaluator.Mean_Intersection_over_Union_with_depth(80, save_filename)
+            print('depth: 60~80m ')
+            print('20 class mIoU: {} \n'.format(mIoU_60_80))
+            if not self.opts.test_only:
+                self.writer.add_scalar('val/60_80_obs_mIoU', mIoU_60_80, self.cur_epochs)
+            with open(save_filename, 'a') as f:
+                f.write('depth: 60~80m ')
+                f.write('20 class mIoU: {} \n'.format(mIoU_60_80))
+
+            mIoU_80_100 = self.evaluator.Mean_Intersection_over_Union_with_depth(100, save_filename)
+            print('depth: 80~100m ')
+            print('20 class mIoU: {} \n'.format(mIoU_80_100))
+            if not self.opts.test_only:
+                self.writer.add_scalar('val/80_100_obs_mIoU', mIoU_80_100, self.cur_epochs)
+            with open(save_filename, 'a') as f:
+                f.write('depth: 80~100m ')
+                f.write('20 class mIoU: {} \n'.format(mIoU_80_100))
 
     def calculate_disparity_error(self, pred_disp, gt_disp, mask,
                                   val_epe, val_d1, val_thres1, val_thres2, val_thres3):
