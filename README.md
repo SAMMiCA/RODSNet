@@ -1,6 +1,6 @@
 ## RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
 
-This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection Network via **S**imultaneous semantic segmentation and disparity estimation (RODSNet). Below shows the overall network architecture.
+This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection Network via **S**imultaneous refinement **N**etwork (RODSNet). Below shows the overall network architecture.
 <p align="center"><img width=100% src="doc/overall_network_v3.png"></p>
 
 *Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
