@@ -42,9 +42,9 @@ cd network/deform_conv && bash build.sh // build deformable convolution
 ---
 
 ### Datasets
-- [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html), 
-- [KITTI Stereo 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo), 
-- [KITTI Stereo 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo), 
+- [Scene Flow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html)
+- [KITTI Stereo 2012](http://www.cvlibs.net/datasets/kitti/eval_stereo_flow.php?benchmark=stereo)
+- [KITTI Stereo 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo)
 - [Cityscapes](https://www.cityscapes-dataset.com/)
 - [Lost and Found](http://www.6d-vision.com/lostandfounddataset) 
 
@@ -172,16 +172,20 @@ python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet
 For fast inference, evaluation is run without saving the intermediate results.  (To save any results, add `--save_val_results` option. The output results will then be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.)
 
 #### Sample Inference Test
+You can test our pre-trained RODSNet-2x performances without downloading huge datasets using the commands below. The results will be saved in `samples/results` folder.
 
 ```shell
-python sample_test.py --gpu_id 0 \
+python3 sample_test.py --gpu_id 0 \
 --with_refine \
 --refinement_type new18 \
 --train_disparity --train_semantic \
 --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
-You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the `samples/RODSNet-2x_results` folder.
+Sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the directory `samples/RODSNet-2x_results`.
+
+<img src="doc/git_sample_imgs2.png" width="1200" />
+
 
 ---
 
