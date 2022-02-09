@@ -47,14 +47,14 @@
       <sup>*,	<span>&#8224;</span> </sup>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <font size="4"> <a href="mailto:johkim@rit.kaist.ac.kr" target="_blank">Jong-Hwan Kim</a> 
-      <sup>*</sup>
+      <sup><span>&#8224;</span></sup>
     </font>
 </p>
 <p style="text-align:left">
   <i><font size="4">
-      <sup>*</sup>School of Electrical Engineering, Korea Advanced Institute of Science and Technology (<b><a href="https://kaist.ac.kr/">KAIST</a></b>)  
+      <sup><span>&#8224;</span></sup>School of Electrical Engineering, Korea Advanced Institute of Science and Technology (<b><a href="https://kaist.ac.kr/">KAIST</a></b>)  
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <sup><span>&#8224;</span></sup>Equal Contribution
+      <sup>*</sup>Equal Contribution
   </i>
 </p>
 </div>
@@ -64,16 +64,12 @@
 <div id="body" class="body">
 <div id="section1" class="section">
 <p>
-Semantic segmentation and depth estimation lie at the heart of scene understanding and play crucial roles especially for autonomous driving and intelligent robot navigation. While development of deep convolutional neural networks (CNNs) has led to remarkable progress in each task separately, there are only a handful of studies that exploit these tasks for obstacle detection in urban autonomous driving scenarios, with a high accuracy in a real-time fashion. In this light, we propose an end-to-end Real-time Obstacle Detection network via Simultaneous semantic segmentation and disparity estimation, coined RODSNet1, which jointly learns semantic segmentation and disparity map from a stereo RGB pair and refines them simultaneously in a single module.We verify the disparity estimation performance on KITTI Stereo 2015 benchmark after pre-training on Scene Flow, and the semantic segmentation on Cityscapes and Lost and Found datasets. In particular, we merge Cityscapes and Lost and Found  in our multi-dataset fusion for the task of obstacle detection on the road, where unexpected hazards or debris are frequently encountered. Our network achieves a balanced trade-off between obstacle detection accuracy and inference speed on this fused dataset and can be deployed in real-time at 14.5 Hz (full) and 29.4 Hz (half) on 2048x1024 pixel resolution.
+Semantic segmentation and depth estimation lie at  the heart of scene understanding and play crucial roles especially for autonomous driving. In particular, it is desirable for an intelligent self-driving agent to discern unexpected obstacles on the road ahead reliably in real-time. While existing semantic segmentation studies for small road hazard detection have incorporated fusion of multiple modalities, they require additional sensor inputs and are often limited by a heavyweight network for real-time processing. In this light, we propose an end-to-end Real-time Obstacle Detection via Simultaneous refinement, coined RODSNet, which jointly learns semantic segmentation and disparity maps from a stereo RGB pair and refines them simultaneously in a single module. RODSNet exploits two efficient single-task network architectures and a simple refinement module in a multi-task learning scheme to recognize unexpected small obstacles on the road. We validate our method by fusing Cityscapes and Lost and Found datasets and show that our method outperforms previous approaches on the obstacle detection task, even recognizing the unannotated obstacles at 14.5 FPS on our fused dataset (2048×1024 resolution) using RODSNet-2×. In addition, extensive ablation studies demonstrate that our simultaneous refinement effectively facilitates contextual learning between semantic and depth information.
 </p>
 
-<figure class="aligncenter">
-  <img src="pipeline.png" alt="pipeline" style="width:100%">
-</figure>
-
 <p>  
-  <a href="https://arxiv.org/abs//?????" target="_blank">[arXiV]</a>
-  <!-- <a href="https://doi.org/??????" target="_blank">[PDF]</a> -->
+  <!-- <a href="https://arxiv.org/abs/?????" target="_blank">[IEEE Xplorer Link]</a> -->
+  <a href="https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing" target="_blank">[PDF]</a>
   <a href="https://github.com/SAMMiCA/RODSNet" target="_blank">[Code]</a>
  </p>
 
@@ -84,7 +80,7 @@ Semantic segmentation and depth estimation lie at the heart of scene understandi
   <tr>
     <th>
 	    <video width="840" height="480" controls>
-		  <source src="video.mp4" type="video/mp4" alt="video demonstration">
+		  <source src="https://rit.kaist.ac.kr/wp-content/uploads/2022/02/RODSNet_demo_upload.mp4" type="video/mp4" alt="video demonstration">
 		  Your browser does not support HTML5 video.
 		</video>
     </th>
@@ -94,79 +90,51 @@ Semantic segmentation and depth estimation lie at the heart of scene understandi
 
 
 <hr class="heavy" />
-<h2>Obstacle Detection</h2>
+<h2>Proposed Network</h2>
 <div id="body" class="body">
 <div id="section1" class="section">
+
+<figure class="aligncenter">
+  <img src="overall_network_v3.png" alt="pipeline" style="width:100%">
+</figure>
+
 <p>
-  ...
-
-  <br><br>
-
-  "The definition of obstacle detection task has been often interpreted in the scope of anomaly detection for its nature of distinguishing never-seen-before objects from the rest. In this characterization, [38] attempts to reconstruct a scene from the segmentation map using a Restricted Boltzmann Machine and to detect anomalous patches in the road specifically, and [39] implements a discrepancy network to compare meaningful differences between the reconstructed and the reference RGB within its region of interest. Commercial works such as Mobileye [40] and Subaru Eyesight™ [41] also demonstrate success in detecting obstacles in the scope of anomaly detection. However, all these works have limitations in that they are effective in detecting large-scale obstacles only and lack localization capabilities for other class objects. 
-  
-  <br><br>
-
-  Within our definition of obstacle detection, one such a
-  network should be able to distinguish both large, labelled class
-  objects as well as small, generic obstacle class. For example,
-  [42] is a non-machine-learning based approach to detecting
-  obstacles using inverse perspective mapping from stereo vision
-  by determining the collision-free space before vehicles.
-  Another work [43] is based on monocular vision, which uses
-  motion features on two consecutive frames to compute the
-  likelihood of obstacle regions. While this enjoys a benefit of
-  integration with the optical flow method [44] without extra
-  calibration of the camera, the use of traditional descriptors as
-  features precludes further improvements in accuracy.
-  A recent work [4] introduces a multi-modal approach to
-  leverage depth information in addition to RGB data for the task
-  of identifying obstacles in the segmentation map in real-time.
-  While this addresses real-time unexpected obstacle detection
-  from the semantic segmentation map, its RGB and depth
-  feature fusion by element-wise sum in the Attention Feature
-  Complementary (AFC) module is insufficient to discern unannotated
-  obstacles as well. In this paper, we develop a
-  more generalized unexpected obstacle detection network in a
-  multi-task learning framework to promote mutual information
-  exchange between semantic and disparity features. Moreover,
-  our network achieves real-time speed for practical self-driving
-  applications."
-
-  <br><br>
-
-  ...
+We propose an end-to-end network for Real-time Obstacle Detection via Simultaneous refinement, termed RODSNet. Given a pair of stereo RGB images, RODSNet jointly refines initial semantic and disparity maps in one stage, discerning both trained and unexpected roadside obstacles. Our network builds upon efficient single-task network architectures to estimate initial semantic segmentation and disparity maps, and adds a simple simultaneous refinement module to further improve both results. While we target real-time obstacle detection, this refinement module can also be coupled with other high-performing single-task networks at the expense of an increased computation time. 
+<br/><br/>
+We highlight our main contributions in three-fold:
+<br/>
+1. We propose a simple and efficient refinement module that simultaneously improves the predicted semantic segmentation and disparity maps. In contrast to other attention-based approaches, our module exploits a stacked hourglass network to promote contextual refinement with the initial semantic and disparity maps, and the left (reference) RGB image as inputs.
+<br/><br/>
+2. Our network outperforms existing semantic segmentation networks for road obstacle detection. RODSNet−2× achieves 2.6% and 1.7% improvements in segmentation accuracy for small obstacles (IoU) and all classes (mIoU), respectively, at 14.5 FPS inference speed on our fused dataset (2048×1024 resolution). Moreover, our ablation study demonstrates that it can be further tuned to better detect obstacles across all depth ranges than previous
+methods. 
+<br/><br/>
+3. The proposed network can be generalized to detect unannotated obstacles on the road. RODSNet effectively detects obstacles even in the absence of proper annotations
 </p>
 
 <hr class="heavy" />
-<h2>Multi-Task Learning</h2>
+<h2>Network Modules</h2>
 <div id="body" class="body">
 <div id="section1" class="section">
 <p>
-  Our multi-task learning network consists of the following modules: Base feature extractor, semantic segmentation, disparity estimation and refinement.
+  Our multi-task learning network consists of the following modules: Base feature extractor, initial semantic segmentation and disparity map estimation, and simultaneous refinement.
 
   <br><br><br>
   <i>Base feature extractor</i>
   
   <figure class="aligncenter">
-    <img src="base_encoder.png" alt="Base feature extractor" style="width:50%">
+    <img src="overall_network_v3_basefeatext.png" alt="Base feature extractor" style="width:50%">
   </figure>
 
-  <i>Semantic Segmentation</i>
+  <i>Initial Map Estimation</i>
   
   <figure class="aligncenter">
-    <img src="semantic_segmentation.png" alt="semantic segmentation" style="width:50%">
+    <img src="overall_network_v3_initial_est.png" alt="Initial map estimation" style="width:50%">
   </figure>
 
-  <i>Disparity estimation</i>
+  <i>Simultaneous Refinement</i>
 
   <figure class="aligncenter">
-    <img src="disparity_estimation.png" alt="disparity estimation" style="width:50%">
-  </figure>
-
-  <i>Refinement</i>
-
-  <figure class="aligncenter">
-    <img src="refinement.png" alt="refinement" style="width:50%">
+    <img src="overall_network_v3_refinement.png" alt="Simultaneou refinement" style="width:50%">
   </figure>
 </p>
 
@@ -175,22 +143,17 @@ Semantic segmentation and depth estimation lie at the heart of scene understandi
 <div id="section8" class="section">
   <h2 id="bibtex">Citation</h2>
 <pre>
-@article {songjeong2021rodsnet,
+@article{songjeong2021rodsnet,
     author = {Song, Taek-jin and Jeong, Jongoh and Kim, Jong-Hwan},
     title = {End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning},
-    year = {2021},
-    doi = {???},
-    URL = {https://doi.org/???},
-    journal = {Journal}
+    year = {2022},
+    doi = {000},
+    URL = {https://doi.org/000},
+    journal = {IEEE Transactions on Intelligent Transportation Systems (T-ITS)}
 }
 </pre>
 </div>
 
-
 <hr class="heavy" />
 <h2> Acknowledgements </h2>
-<p>This work was supported by the
-  Institute for Information & Communications Technology Promotion (IITP)
-  grant funded by the Korea government (MSIT) (No.2020-0-00440, Development
-  of Artificial Intelligence Technology that Continuously Improves Itself
-  as the Situation Changes in the Real World). </p>
+<p>This work was supported by the Institute for Information & Communications Technology Promotion (IITP) grant funded by the Korea government (MSIT) (No.2020-0-00440, Development of Artificial Intelligence Technology that Continuously Improves Itself as the Situation Changes in the Real World). </p>
