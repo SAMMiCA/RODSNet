@@ -29,7 +29,7 @@ of scales 1/4 , 1/8 , 1/16 , 1/32 , 1/64 , 1/128 . The network parameters are sh
 
 ---
 ### Environment Setup
-- PyTorch v1.2.0
+- PyTorch 1.2.0
 - CUDA 10.0
 - Python 3.7 (recommended: [Anaconda](https://www.anaconda.com/distribution/))
 
