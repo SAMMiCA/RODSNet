@@ -15,7 +15,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new1 \
 --batch_size 3 --val_batch_size 1 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1
 
 
@@ -27,7 +27,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new4 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1
 
 
@@ -38,7 +38,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new7 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 1
 
@@ -50,7 +50,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new8 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1
 
 
@@ -61,7 +61,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new10 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1
 
 
@@ -73,7 +73,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new16 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 1
 
@@ -86,7 +86,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new17 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 5
 
@@ -99,7 +99,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new17 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 10
 
@@ -111,7 +111,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new18 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1
 
 
@@ -122,7 +122,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new19 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 1
 
@@ -134,7 +134,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new21 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_to_obst_ch --gamma 1
 
@@ -146,7 +146,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new23 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_plus_1_to_obst_ch --gamma 1
 
@@ -158,7 +158,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new24 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_plus_1_to_obst_ch --gamma 1
 
@@ -171,7 +171,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new31 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_plus_1_to_obst_ch --gamma 10
 
@@ -182,7 +182,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new32 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --save_pth_every_epoch --save_dir /root/dataset/
 
@@ -194,7 +194,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new33 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --save_pth_every_epoch --save_dir /root/dataset/
 
@@ -206,7 +206,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new34 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --save_pth_every_epoch --save_dir /root/dataset/
 
@@ -218,7 +218,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new35 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_plus_1_to_obst_ch --gamma 1 \
 --save_pth_every_epoch --save_dir /root/dataset/
@@ -231,7 +231,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
 --with_refine --refinement_type new35 \
 --batch_size 4 --val_batch_size 4 \
 --train_semantic --train_disparity \
---resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+--resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
 --epsilon 1e-1 \
 --disp_plus_1_to_obst_ch --gamma 10 \
 --save_pth_every_epoch --save_dir /root/dataset/
