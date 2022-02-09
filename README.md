@@ -149,7 +149,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
     --with_refine --refinement_type new18 \
     --batch_size 4 --val_batch_size 4 \
     --train_semantic --train_disparity \
-    --resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+    --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
     --epsilon 1e-1
 ```
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
