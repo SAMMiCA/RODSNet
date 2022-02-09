@@ -67,13 +67,6 @@
 Semantic segmentation and depth estimation lie at  the heart of scene understanding and play crucial roles especially for autonomous driving. In particular, it is desirable for an intelligent self-driving agent to discern unexpected obstacles on the road ahead reliably in real-time. While existing semantic segmentation studies for small road hazard detection have incorporated fusion of multiple modalities, they require additional sensor inputs and are often limited by a heavyweight network for real-time processing. In this light, we propose an end-to-end Real-time Obstacle Detection via Simultaneous refinement, coined RODSNet, which jointly learns semantic segmentation and disparity maps from a stereo RGB pair and refines them simultaneously in a single module. RODSNet exploits two efficient single-task network architectures and a simple refinement module in a multi-task learning scheme to recognize unexpected small obstacles on the road. We validate our method by fusing Cityscapes and Lost and Found datasets and show that our method outperforms previous approaches on the obstacle detection task, even recognizing the unannotated obstacles at 14.5 FPS on our fused dataset (2048×1024 resolution) using RODSNet-2×. In addition, extensive ablation studies demonstrate that our simultaneous refinement effectively facilitates contextual learning between semantic and depth information.
 </p>
 
-<figure class="aligncenter">
-  <img src="overall_network_v3.png" alt="pipeline" style="width:100%">
-  <!-- <img src="overall_network_v3_basefeatext.png" alt="pipeline" style="width:100%">
-  <img src="overall_network_v3_initial_est.png" alt="pipeline" style="width:100%">
-  <img src="overall_network_v3_refinement.png" alt="pipeline" style="width:100%"> -->
-</figure>
-
 <p>  
   <!-- <a href="https://arxiv.org/abs/?????" target="_blank">[IEEE Xplorer Link]</a> -->
   <a href="https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing" target="_blank">[PDF]</a>
@@ -100,6 +93,11 @@ Semantic segmentation and depth estimation lie at  the heart of scene understand
 <h2>Proposed Network</h2>
 <div id="body" class="body">
 <div id="section1" class="section">
+
+<figure class="aligncenter">
+  <img src="overall_network_v3.png" alt="pipeline" style="width:100%">
+</figure>
+
 <p>
 We propose an end-to-end network for Real-time Obstacle Detection via Simultaneous refinement, termed RODSNet. Given a pair of stereo RGB images, RODSNet jointly refines initial semantic and disparity maps in one stage, discerning both trained and unexpected roadside obstacles. Our network builds upon efficient single-task network architectures to estimate initial semantic segmentation and disparity maps, and adds a simple simultaneous refinement module to further improve both results. While we target real-time obstacle detection, this refinement module can also be coupled with other high-performing single-task networks at the expense of an increased computation time. 
 <br/><br/>
