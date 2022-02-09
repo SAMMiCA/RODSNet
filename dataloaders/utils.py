@@ -4,7 +4,7 @@ import torch
 from torchvision import transforms
 from torch.utils.data.dataloader import default_collate
 
-from dataloaders.datasets import VOCSegmentation, Cityscapes, CityLostFound, LostFound
+from dataloaders.datasets import Cityscapes, CityLostFound, LostFound
 # from dataloaders import custom_transforms as sw
 from dataloaders import custom_transforms2 as sw
 
