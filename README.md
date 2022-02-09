@@ -172,6 +172,7 @@ python main.py --gpu_id 0 --dataset city_lost --checkname city_lost_test_RODSNet
 For fast inference, evaluation is run without saving the intermediate results.  (To save any results, add `--save_val_results` option. The output results will then be saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/results` folder.)
 
 #### Sample Inference Test
+You can test our pre-trained RODSNet-2x performances without downloading huge datasets using the below commands. The results will be saved in `samples/results' folder.
 
 ```shell
 python sample_test.py --gpu_id 0 \
@@ -182,6 +183,8 @@ python sample_test.py --gpu_id 0 \
 ```
 
 You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the `samples/RODSNet-2x_results` folder.
+
+<img src="doc/git_sample_imgs.png" width="400" />
 
 ---
 
