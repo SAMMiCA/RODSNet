@@ -4,9 +4,9 @@
 This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection via **S**imultaneous refinement **N**etwork (RODSNet). Below shows the overall network architecture.
 <p align="center"><img width=100% src="docs/overall_network_v3.png"></p>
 
-[![report](https://img.shields.io/badge/arxiv-report-red)](https://sammica.github.io/RODSNet)
-[![page](https://img.shields.io/badge/page-changesim-green)](https://sammica.github.io/RODSNet)
-[![page](https://img.shields.io/badge/page-paperswithcode-blue)](https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing)
+[![report](https://img.shields.io/badge/paper-paper-blue)](https://sammica.github.io/RODSNet)
+[![code](https://img.shields.io/badge/code-code-green)](https://sammica.github.io/RODSNet)
+[![PDF](https://img.shields.io/badge/pdf-pdf-yellow)](https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing)
 
   
 *Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
