@@ -1,8 +1,14 @@
 ## RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
 
+
 This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection via **S**imultaneous refinement **N**etwork (RODSNet). Below shows the overall network architecture.
 <p align="center"><img width=100% src="docs/overall_network_v3.png"></p>
 
+[![report](https://img.shields.io/badge/arxiv-report-red)](https://sammica.github.io/RODSNet)
+[![page](https://img.shields.io/badge/page-changesim-green)](https://sammica.github.io/RODSNet)
+[![page](https://img.shields.io/badge/page-paperswithcode-blue)](https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing)
+
+  
 *Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
 pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
 small obstacles (in brown).*
@@ -149,7 +155,7 @@ python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resne
     --with_refine --refinement_type new18 \
     --batch_size 4 --val_batch_size 4 \
     --train_semantic --train_disparity \
-    --resume ckpt/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
+    --resume run/sceneflow/best_disp_model/epe_best_checkpoint.pth --transfer_disparity \
     --epsilon 1e-1
 ```
 Trained results are saved in `$RODSNet/run/[dataset]/[checkname]/experiment_0/` directory.
