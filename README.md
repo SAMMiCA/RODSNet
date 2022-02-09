@@ -1,7 +1,7 @@
 ## RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning
 
 This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection via **S**imultaneous refinement **N**etwork (RODSNet). Below shows the overall network architecture.
-<p align="center"><img width=100% src="doc/overall_network_v3.png"></p>
+<p align="center"><img width=100% src="docs/overall_network_v3.png"></p>
 
 *Figure: Overview of the proposed end-to-end network architecture for class-agnostic obstacle detection. The network takes a
 pair of stereo RGB images to infer semantic segmentation and disparity map simultaneously, from which it detects unexpected
@@ -10,7 +10,7 @@ small obstacles (in brown).*
 
 Base Feature Extraction & Refinement Module                      |  Initial Estimation of Semantic segmentation and Disparity prediction
 :-------------------------------------------:|:----------------------------------------------------------------------:
-<img src="doc/overall_network_v3_basefeatext.png" width="400" /> <img src="doc/overall_network_v3_refinement.png" width="400" /> |  <img src="doc/overall_network_v3_initial_est.png" width="800" />
+<img src="docs/overall_network_v3_basefeatext.png" width="400" /> <img src="docs/overall_network_v3_refinement.png" width="400" /> |  <img src="docs/overall_network_v3_initial_est.png" width="800" />
 
 
 
@@ -185,7 +185,7 @@ python3 sample_test.py --gpu_id 0 \
 =======
 Sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the directory `samples/RODSNet-2x_results`.
 
-<img src="doc/sample_dataset_comparison.png" width="1200" />
+<img src="docs/sample_dataset_comparison.png" width="1200" />
 
 ---
 
