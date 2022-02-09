@@ -140,6 +140,8 @@ Download all pretrained models [here](https://drive.google.com/file/d/1U5fl2V5Y7
 #### Train and Evaluate
 Detailed commands for training and evaluation are described in `script/train_test_guide.txt`. 
 
+Change the dataset's root directory by using `--data_root [$DATA_ROOT]` commands.
+
 For training our RODSNet-2x on `city_lost` datasets:
 ```shell
 python main.py --gpu_id 0 --dataset city_lost --model resnet18 --checkname resnet18_train_refine_new18 \
