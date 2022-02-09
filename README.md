@@ -26,6 +26,9 @@ of scales 1/4 , 1/8 , 1/16 , 1/32 , 1/64 , 1/128 . The network parameters are sh
 ---
 #### Evaluation Demo (real world), (RODSNet-2x vs. RFNet)
 ![Demo 1](doc/demo1_web_.mp4)
+<iframe id="video" width="100" height="100" src="doc/demo1_web_.mp4" frameborder="0">
+</iframe>
+
 
 ---
 ### Environment Setup
