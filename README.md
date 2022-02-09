@@ -184,7 +184,7 @@ python sample_test.py --gpu_id 0 \
 
 You can see the sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the `samples/RODSNet-2x_results` folder.
 
-<img src="doc/git_sample_imgs2.png" width="1200" />
+<img src="doc/git_sample_imgs.png" width="1200" />
 
 ---
 
