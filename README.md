@@ -24,7 +24,7 @@ of scales 1/4 , 1/8 , 1/16 , 1/32 , 1/64 , 1/128 . The network parameters are sh
 *Refinement (in blue background): initial semantic and disparity maps, and the left RGB (reference) image are fed into Nx hourglass network, and then upsampled with skip connections. The effect of the red branch is studied in ablation.*
 
 ---
-#### Evaluation Demo (real world), (RODSNet-2x vs. RFNet)
+#### Evaluation Demo videos (real world), (RODSNet-2x vs. RFNet)
 [![Video Label](https://img.youtube.com/vi/teEABZCGVzk/0.jpg)](https://www.youtube.com/watch?v=teEABZCGVzk)
 
 ---
