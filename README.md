@@ -5,7 +5,7 @@
 [![PDF](https://img.shields.io/badge/Project-PDF-yellow)](https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing)
 
 
-This is the official PyTorch source code for the proposed end-to-end framework for **R**eal-time **O**bstacle **D**etection via **S**imultaneous refinement **N**etwork (RODSNet). Below shows the overall network architecture.
+This is the official PyTorch source code for the proposed end-to-end network for **R**eal-time **O**bstacle **D**etection via **S**imultaneous Refinement **N**etwork (RODSNet). Below shows the overall network architecture.
 <p align="center"><img width=100% src="docs/overall_network_v3.png"></p>
 
   
