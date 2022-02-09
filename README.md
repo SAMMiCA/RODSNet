@@ -182,10 +182,10 @@ python3 sample_test.py --gpu_id 0 \
 --resume ckpt/city_lost/RODSNet_2x/score_best_checkpoint.pth
 ```
 
+=======
 Sample results of pre-trained RODSNet-2x which are tested on various environments (*KITTI, Lost and Found, Cityscapes, CARLA Simulation and real world*) in the directory `samples/RODSNet-2x_results`.
 
 <img src="doc/sample_dataset_comparison.png" width="1200" />
-
 
 ---
 
