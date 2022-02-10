@@ -202,14 +202,16 @@ Sample results of pre-trained RODSNet-2x which are tested on various environment
 
 - Parts of the code are adopted from previous works ([AANet](https://github.com/haofeixu/aanet), and [RFNet](https://github.com/AHupuJR/RFNet)). We appreciate the original authors for their awesome repos. 
 
+---
+
 ### Citation
 ```bash
-@article {songjeong2022rodsnet,
+@article{songjeong2022rodsnet,
     author = {Song, Taek-jin* and Jeong, Jongoh* and Kim, Jong-Hwan},
     title = {End-to-end Real-time Obstacle Detection for Safe Self-driving via Multi-task Learning},
     year = {2022},
-    doi = {???},
-    URL = {https://doi.org/???},
+    doi = {10.1109/TITS.2022.3149789},
+    URL = {https://doi.org/10.1109/TITS.2022.3149789},
     journal = {IEEE Transactions on Intelligent Transportation Systems}
 }
 ```
