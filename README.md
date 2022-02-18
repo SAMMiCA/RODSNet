@@ -2,7 +2,7 @@
 
 [![page](https://img.shields.io/badge/Project-Page-blue)](https://sammica.github.io/RODSNet)
 [![code](https://img.shields.io/badge/Project-Repo-Green)](https://sammica.github.io/RODSNet)
-[![PDF](https://img.shields.io/badge/Project-PDF-yellow)](https://drive.google.com/file/d/1ngFoE8Cpq4HxsGZho60R11zaJOBdGD0G/view?usp=sharing)
+[![PDF](https://img.shields.io/badge/Project-DOI-yellow)](https://doi.org/10.1109/TITS.2022.3149789)
 
 
 This is the official PyTorch source code for the proposed end-to-end network for **R**eal-time **O**bstacle **D**etection via **S**imultaneous Refinement **N**etwork (RODSNet). Below shows the overall network architecture.
