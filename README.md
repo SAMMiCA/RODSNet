@@ -1,9 +1,9 @@
 ## [RODSNet: End-to-end Real-time Obstacle Detection Network for Safe Self-driving via Multi-task Learning](https://sammica.github.io/RODSNet)
 
 [![page](https://img.shields.io/badge/Project-Page-blue)](https://sammica.github.io/RODSNet)
-[![code](https://img.shields.io/badge/Project-Repo-Green)](https://sammica.github.io/RODSNet)
-[![PDF](https://img.shields.io/badge/Project-DOI-yellow)](https://doi.org/10.1109/TITS.2022.3149789)
-
+[![code](https://img.shields.io/badge/Project-Repo-green)](https://sammica.github.io/RODSNet)
+[![DOI](https://img.shields.io/badge/Project-DOI-yellow)](https://doi.org/10.1109/TITS.2022.3149789)
+[![PDF](https://img.shields.io/badge/Project-PDF-orange)](https://1drv.ms/b/s!AgV_yNCCwglcgQFTK_Q1dRe7r3PT)
 
 This is the official PyTorch source code for the proposed end-to-end network for **R**eal-time **O**bstacle **D**etection via **S**imultaneous Refinement **N**etwork (RODSNet). Below shows the overall network architecture.
 <p align="center"><img width=100% src="docs/overall_network_v3.png"></p>
